@@ -1,0 +1,960 @@
+<!doctype html>
+<html lang="ko" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>자동차부품 제조업 POP</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+/* 디자인 토큰: ARCON · AI 오케스트레이션과 같은 결 (다크 기본, 사이드바는 두 테마 모두 어둡게) */
+:root{
+  --bg:#060A13; --bg-grad:radial-gradient(1200px 600px at 85% -10%, rgba(56,189,248,.08), transparent 60%), radial-gradient(900px 500px at -10% 110%, rgba(129,140,248,.07), transparent 60%);
+  --surface:#0C1322; --surface2:#111A2C; --surface3:#16213A; --ink:#E6EDF7; --ink2:#C3CEE0; --muted:#8293AE; --line:rgba(148,163,184,.14); --line2:rgba(148,163,184,.24);
+  --accent:#38BDF8; --accent2:#22D3EE; --accent-ink:#04121C; --accent-soft:rgba(56,189,248,.12);
+  --rail:#070C17; --rail-line:rgba(148,163,184,.10); --rail-ink:#C8D3E6; --rail-muted:#6E7F9C; --rail-active:linear-gradient(90deg, rgba(56,189,248,.22), rgba(56,189,248,.06));
+  --ok:#34D399; --warn:#FBBF24; --crit:#FB7185; --info:#818CF8;
+  --ok-soft:rgba(52,211,153,.12); --warn-soft:rgba(251,191,36,.12); --crit-soft:rgba(251,113,133,.12); --info-soft:rgba(129,140,248,.14);
+  --shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 8px 24px -12px rgba(0,0,0,.6);
+  --f-sans:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Hiragino Sans","Yu Gothic UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --r:14px; --r-sm:9px;
+  color-scheme:dark;
+}
+:root[data-theme="light"]{
+  --bg:#F5F7FB; --bg-grad:radial-gradient(1100px 500px at 90% -20%, rgba(37,99,235,.06), transparent 60%);
+  --surface:#FFFFFF; --surface2:#F8FAFC; --surface3:#F1F5F9; --ink:#0F172A; --ink2:#334155; --muted:#64748B; --line:#E2E8F0; --line2:#CBD5E1;
+  --accent:#2563EB; --accent2:#0891B2; --accent-ink:#FFFFFF; --accent-soft:#EFF6FF;
+  --ok:#059669; --warn:#B45309; --crit:#E11D48; --info:#4F46E5;
+  --ok-soft:#ECFDF5; --warn-soft:#FFFBEB; --crit-soft:#FFF1F2; --info-soft:#EEF2FF;
+  --shadow:0 1px 2px rgba(15,23,42,.04), 0 4px 16px -8px rgba(15,23,42,.08);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg) fixed;background-image:var(--bg-grad);color:var(--ink);font-family:var(--f-sans);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word}
+:root[lang="ja"] body,:root[lang="ko"] body{line-break:strict}
+button,input,select,textarea{font:inherit;color:inherit}
+.mono{font-family:var(--f-mono);font-size:12.5px}
+.num{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+svg.i{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* 틀 */
+.app{display:grid;grid-template-columns:268px minmax(0,1fr);min-height:100%}
+.rail{background:var(--rail);border-right:1px solid var(--rail-line);padding:18px 14px;display:flex;flex-direction:column;gap:14px;position:sticky;top:0;height:100vh;overflow:auto;color:var(--rail-ink);scrollbar-width:thin}
+.brand{display:flex;align-items:center;gap:11px;padding:2px 6px 4px}
+.brand .logo{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#0EA5E9,#6366F1);box-shadow:0 6px 18px -6px rgba(56,189,248,.55)}
+.brand .bt{display:flex;flex-direction:column;line-height:1.25}
+.brand b{font-size:15.5px;letter-spacing:-.02em;color:#F1F5F9}
+.brand .bt span{font-size:11.5px;color:var(--rail-muted)}
+.tenant{display:grid;gap:3px;padding:10px 12px;border-radius:12px;background:rgba(148,163,184,.06);border:1px solid var(--rail-line);font-size:12px}
+.tenant .tl1{display:flex;justify-content:space-between;color:var(--rail-muted);font-size:11px}
+.tenant .okc{display:inline-flex;align-items:center;gap:5px;color:#34D399}
+.tenant .okc::before{content:"";width:7px;height:7px;border-radius:50%;background:#34D399;box-shadow:0 0 8px #34D399}
+.tenant .tl2{color:#E2E8F0;font-weight:600}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav .sec{font-size:10.5px;font-weight:700;letter-spacing:.12em;color:var(--rail-muted);padding:10px 10px 6px;text-transform:uppercase}
+.nav a{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:10px;color:var(--rail-ink);text-decoration:none;position:relative;transition:background .15s,color .15s;cursor:pointer}
+.nav a:hover{background:rgba(148,163,184,.08);color:#fff}
+.nav a svg{color:var(--rail-muted)}
+.nav a .nl{display:flex;flex-direction:column;min-width:0;line-height:1.3}
+.nav a .nl span{font-size:13.5px;font-weight:600}
+.nav a .nl small{font-size:11px;color:var(--rail-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav a[aria-current="page"]{background:var(--rail-active);color:#fff}
+.nav a[aria-current="page"]::before{content:"";position:absolute;left:-14px;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:#38BDF8;box-shadow:0 0 12px #38BDF8}
+.nav a[aria-current="page"] svg{color:#38BDF8}
+.nav a[aria-current="page"] .nl small{color:#93C5FD}
+.badge-n{margin-left:auto;font-size:11px;background:#F43F5E;color:#fff;border-radius:999px;padding:0 7px;font-weight:700;line-height:18px;box-shadow:0 0 10px rgba(244,63,94,.5)}
+.scope{margin-top:auto;border:1px solid var(--rail-line);border-radius:12px;padding:12px;font-size:12px;display:grid;gap:7px;background:rgba(148,163,184,.05)}
+.scope .who{display:flex;align-items:center;gap:10px}
+.scope .avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#04121C;background:linear-gradient(135deg,#7DD3FC,#A5B4FC);flex:none}
+.scope .wn{display:flex;flex-direction:column;min-width:0;line-height:1.3}
+.scope .wn b{color:#F1F5F9;font-size:13px}
+.scope .wn small{color:var(--rail-muted);font-size:11px}
+.scope label{color:var(--rail-muted);font-size:11px;margin-top:2px}
+.scope select{width:100%;padding:7px 9px;font-size:12px;background:#0B1324;border:1px solid var(--rail-line);color:#E2E8F0;border-radius:8px}
+
+.main-col{min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:15;display:flex;align-items:center;gap:16px;padding:12px 28px;background:color-mix(in srgb, var(--bg) 78%, transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.crumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);white-space:nowrap}
+.crumb b{color:var(--ink);font-weight:600}
+.tsearch{position:relative;flex:1;max-width:560px;margin-inline:auto;display:flex;align-items:center;gap:10px;padding:0 16px;height:42px;border-radius:999px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+.tsearch:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.tsearch svg{color:var(--accent)}
+.tsearch input{flex:1;min-width:0;border:0;background:none;outline:none;font-size:13.5px}
+.tsearch input::placeholder{color:var(--muted)}
+.sres{position:absolute;left:0;right:0;top:48px;background:var(--surface);border:1px solid var(--line2);border-radius:12px;box-shadow:0 18px 40px -12px rgba(0,0,0,.5);padding:6px;display:none;max-height:360px;overflow:auto;z-index:30}
+.sres.on{display:block}
+.sres button{display:flex;justify-content:space-between;gap:10px;width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:8px;cursor:pointer}
+.sres button:hover{background:var(--surface2)}
+.sres small{color:var(--muted)}
+.tacts{display:flex;align-items:center;gap:8px}
+.iconbtn{position:relative;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;border:1px solid var(--line);background:var(--surface);color:var(--ink2);cursor:pointer;flex:none}
+.iconbtn:hover{color:var(--ink);border-color:var(--line2)}
+.iconbtn .dot{position:absolute;top:8px;right:9px;width:7px;height:7px;border-radius:50%;background:#F43F5E;box-shadow:0 0 8px #F43F5E}
+.langsw{display:inline-flex;align-items:center;gap:2px;height:38px;padding:0 4px 0 9px;border:1px solid var(--line);border-radius:11px;background:var(--surface);color:var(--ink2)}
+.langsw>svg{width:15px;height:15px;margin-right:4px;color:var(--muted)}
+.langsw button{min-width:30px;height:28px;padding:0 6px;border:0;border-radius:8px;background:transparent;color:var(--ink2);font-weight:600;font-size:12px;cursor:pointer}
+.langsw button:hover{color:var(--ink)}
+.langsw button.on{background:var(--accent);color:var(--accent-ink)}
+
+main{padding:24px 28px 56px;min-width:0;width:100%;max-width:1720px;margin-inline:auto}
+h1{font-size:25px;font-weight:800;letter-spacing:-.03em;margin:0;line-height:1.3}
+h2{font-size:15px;font-weight:700;margin:0;letter-spacing:-.015em}
+.lede{color:var(--muted);margin:4px 0 0;font-size:13.5px}
+.head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:18px}
+.head .acts{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.clock{font-family:var(--f-mono);font-size:15px;color:var(--ink2);padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;min-width:0;box-shadow:var(--shadow)}
+.panel>header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.panel>header .hs{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.muted{color:var(--muted)} .small{font-size:12.5px}
+.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
+
+/* KPI */
+.kpi{display:flex;flex-direction:column;gap:3px;min-width:0}
+.kpi .kl{font-size:12px;color:var(--muted)}
+.kpi .kv{font-size:24px;font-weight:700;letter-spacing:-.02em}
+.kpi .kd{font-size:12px;color:var(--muted)}
+.bar{height:8px;border-radius:4px;background:var(--surface2);overflow:hidden;border:1px solid var(--line);margin-top:6px}
+.bar i{display:block;height:100%;background:var(--bc,var(--ok));transition:width .4s}
+.state{display:flex;align-items:center;gap:12px;border-radius:12px;padding:10px 14px;border:1px solid var(--sc);background:var(--ss)}
+.state .dot{width:12px;height:12px;border-radius:50%;background:var(--sc);box-shadow:0 0 12px var(--sc);flex:none}
+.state b{font-size:19px;color:var(--sc)}
+.s-none{--sc:var(--accent);--ss:var(--accent-soft)} .s-run{--sc:var(--ok);--ss:var(--ok-soft)} .s-wait{--sc:var(--muted);--ss:var(--surface2)}
+.s-stop{--sc:var(--warn);--ss:var(--warn-soft)} .s-brk{--sc:var(--crit);--ss:var(--crit-soft)} .s-done{--sc:var(--info);--ss:var(--info-soft)}
+
+/* 표 */
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:var(--r-sm);max-height:420px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:12px;color:var(--muted);font-weight:600;background:var(--surface2);position:sticky;top:0;z-index:1}
+tr:last-child td{border-bottom:0}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover{background:var(--surface2)}
+tbody tr.sel{background:var(--accent-soft)}
+td.r,th.r{text-align:right}
+td.empty{color:var(--muted);text-align:center;padding:18px}
+td input,td select{width:100%;min-width:70px;padding:4px 7px;border:1px solid var(--line2);border-radius:6px;background:var(--surface2)}
+dl.kv{display:grid;grid-template-columns:auto minmax(0,1fr) auto minmax(0,1fr);gap:7px 14px;font-size:13px;margin:0}
+dl.kv dt{color:var(--muted)} dl.kv dd{margin:0;min-width:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* 배지 */
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:1px 9px;font-size:11.5px;font-weight:600;white-space:nowrap;border:1px solid transparent}
+.p-ok{background:var(--ok-soft);color:var(--ok)} .p-warn{background:var(--warn-soft);color:var(--warn)} .p-crit{background:var(--crit-soft);color:var(--crit)}
+.p-info{background:var(--info-soft);color:var(--info)} .p-acc{background:var(--accent-soft);color:var(--accent)} .p-line{border-color:var(--line2);color:var(--muted)}
+
+/* 컨트롤 */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-bottom:12px}
+.fld{display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:var(--muted)}
+.input{border:1px solid var(--line);background:var(--surface2);border-radius:8px;padding:7px 10px;min-width:0;color:var(--ink)}
+.btn{border:1px solid var(--line2);background:var(--surface);border-radius:8px;padding:7px 13px;cursor:pointer;font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;color:var(--ink)}
+.btn:hover{background:var(--surface2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:var(--crit);border-color:var(--crit)}
+.btn.lg{padding:10px 18px;font-size:14px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:12px;overflow-x:auto}
+.tabs button{border:0;background:none;padding:8px 12px;cursor:pointer;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 11px;cursor:pointer;font-size:12.5px;font-weight:600}
+.chip[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+
+/* POP 레이아웃 */
+.pop{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) 230px;gap:14px;align-items:start}
+.acts-col{display:flex;flex-direction:column;gap:8px}
+.abtn{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:12px 14px;cursor:pointer;font-weight:700;font-size:14px;color:var(--ink);box-shadow:var(--shadow)}
+.abtn:hover{border-color:var(--accent)}
+.abtn svg{color:var(--muted)}
+.abtn.go{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)} .abtn.go svg{color:var(--accent)}
+.abtn.end{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)} .abtn.end svg{color:var(--accent-ink)}
+.abtn.crit{color:var(--crit)} .abtn.crit svg{color:var(--crit)}
+.docs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.doc{border:1px solid var(--line);background:var(--surface2);border-radius:11px;padding:12px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:4px;font-weight:700;color:var(--ink)}
+.doc:hover{border-color:var(--accent)}
+.doc small{font-weight:500;color:var(--muted);font-size:11.5px}
+.doc small.req{color:var(--crit)}
+.doc:disabled{opacity:.45;cursor:not-allowed}
+.sub-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:14px 0 6px;font-weight:700;font-size:13.5px}
+.sub-h:first-child{margin-top:0}
+.sub-h small{color:var(--muted);font-weight:500}
+.numin{width:100%;padding:9px 12px;font-size:20px;font-weight:700;text-align:right;border:1px solid var(--accent);background:var(--surface2);border-radius:10px;font-family:var(--f-mono);color:var(--ink)}
+.numin:disabled{border-color:var(--line);opacity:.7}
+.kis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ki{border:1px solid var(--line);background:var(--surface2);border-radius:10px;padding:10px;cursor:pointer;font-family:var(--f-mono);font-weight:600;text-align:center;color:var(--ink)}
+.ki.sel{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.ki.done{color:var(--ok)}
+.ki small{display:block;font-family:var(--f-sans);font-size:11px;color:var(--muted);font-weight:500}
+.emptybox{border:1px dashed var(--line2);border-radius:12px;padding:28px;text-align:center;color:var(--muted)}
+.emptybox b{display:block;color:var(--ink);margin-bottom:4px;font-size:15px}
+
+/* 모달 */
+.dim{position:fixed;inset:0;background:rgba(2,6,15,.62);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+.dim.on{display:flex}
+.modal{background:var(--surface);border:1px solid var(--line2);border-radius:16px;width:min(1100px,100%);max-height:calc(100vh - 40px);display:flex;flex-direction:column;box-shadow:0 30px 70px -20px rgba(0,0,0,.6);overflow:hidden}
+.modal header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--line)}
+.modal header h2{font-size:17px}
+.modal header small{color:var(--muted);margin-left:8px;font-size:12.5px;font-weight:500}
+.modal .mb{padding:16px 20px;overflow:auto;display:flex;flex-direction:column;gap:12px}
+.modal footer{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid var(--line);background:var(--surface2);flex-wrap:wrap}
+.note{font-size:12.5px;color:var(--muted);border-left:3px solid var(--accent);padding:4px 0 4px 10px;margin:0}
+.note.warn{border-color:var(--warn)}
+.formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.formgrid .input{width:100%}
+.label{border:1px solid var(--line2);border-radius:12px;padding:14px;background:#fff;color:#111;width:420px;max-width:100%;font-size:12.5px}
+.label table{font-size:12.5px} .label th,.label td{color:#111;background:#fff;border:1px solid #333;padding:4px 7px;position:static;white-space:normal}
+.label th{background:#f1f1f1;width:96px}
+.bars{height:54px;margin-top:10px;background:repeating-linear-gradient(90deg,#111 0 2px,#fff 2px 4px,#111 4px 7px,#fff 7px 8px,#111 8px 9px,#fff 9px 12px)}
+.qr{width:164px;height:164px;display:grid;grid-template-columns:repeat(21,1fr);background:#fff;padding:8px;border-radius:8px;flex:none}
+.qr i{background:#111}.qr i.w{background:#fff}
+.pdf{background:var(--surface3);border-radius:12px;display:flex;align-items:center;justify-content:center;padding:18px;min-height:460px}
+.pg{width:340px;max-width:100%;height:440px;background:#fff;color:#333;box-shadow:0 8px 24px rgba(0,0,0,.4);padding:26px;font-size:12px;border-radius:3px}
+.pg h4{margin:0 0 6px;text-align:center;font-size:18px}
+.pg .ln{height:9px;background:#e5e7eb;margin:8px 0;border-radius:3px}
+.pg .bx{height:140px;border:1px dashed #9aa5b1;margin:12px 0;display:flex;align-items:center;justify-content:center;color:#8795a1;text-align:center}
+.docgrid{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:14px}
+
+/* 토스트 */
+#toasts{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;align-items:center;z-index:80;max-width:calc(100% - 32px)}
+.toast{background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:10px;font-size:13.5px;font-weight:600;box-shadow:0 12px 30px -10px rgba(0,0,0,.5);display:flex;gap:8px;align-items:center;animation:tin 3s forwards}
+.toast::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--tc,#38BDF8);flex:none}
+.toast.success{--tc:#34D399} .toast.warning{--tc:#FBBF24} .toast.error{--tc:#FB7185}
+@keyframes tin{0%{opacity:0;transform:translateY(8px)}8%{opacity:1;transform:none}85%{opacity:1}100%{opacity:0}}
+
+/* 모바일 */
+.mobwrap{display:grid;grid-template-columns:400px minmax(0,1fr);gap:28px;align-items:start}
+.phone{width:380px;height:760px;background:#05080F;border-radius:46px;padding:12px;border:1px solid var(--line2);box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
+.screen{background:var(--bg);background-image:var(--bg-grad);width:100%;height:100%;border-radius:36px;overflow:hidden;display:flex;flex-direction:column}
+.mbar{background:var(--rail);color:#fff;padding:40px 18px 14px;font-weight:800;font-size:16px;display:flex;align-items:center;gap:10px}
+.mbody{flex:1;padding:14px;display:flex;flex-direction:column;gap:12px;overflow:auto}
+.mbody td{white-space:normal}
+.photo{flex:1;min-height:180px;border:2px dashed var(--line2);border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--muted);text-align:center;padding:12px;background:var(--surface2)}
+.photo.has{border-style:solid;border-color:var(--accent);background:linear-gradient(135deg,#334155,#0f172a);color:#fff}
+.mbtns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mbtns .btn{justify-content:center}
+.steps{margin:0;padding-left:20px;line-height:1.9}
+.alarm{display:grid;grid-template-columns:4px minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 12px 10px 0}
+.alarm .sev{align-self:stretch;border-radius:0 3px 3px 0}
+
+@media (max-width:1320px){.pop{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.pop .acts-col{grid-column:1/-1;flex-direction:row;flex-wrap:wrap}.abtn{width:auto;flex:1 1 150px}.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.docgrid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:920px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .rail{position:sticky;top:0;height:auto;flex-direction:row;align-items:center;padding:10px 16px;gap:12px;border-right:0;border-bottom:1px solid var(--line);z-index:20;overflow:visible}
+  .brand .bt,.scope,.nav .sec,.tenant{display:none}
+  .nav{flex-direction:row;overflow-x:auto;flex:1;min-width:0;scrollbar-width:none}
+  .nav a{white-space:nowrap;padding:6px 9px}.nav a .nl small,.nav a svg{display:none}
+  .nav a[aria-current="page"]::before{display:none}
+  .topbar{padding:10px 16px;flex-wrap:wrap;top:57px}.crumb{display:none}
+  .tsearch{order:3;flex-basis:100%;max-width:none}
+  main{padding-inline:16px}
+  .pop,.g2,.g4,.mobwrap{grid-template-columns:minmax(0,1fr)}
+  .docs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  dl.kv{grid-template-columns:auto minmax(0,1fr)}
+  .formgrid{grid-template-columns:minmax(0,1fr)}
+  .phone{width:100%;max-width:380px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="rail">
+    <div class="brand">
+      <div class="logo"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4M7 8h4M7 11h7"/></svg></div>
+      <div class="bt"><b id="brandName"></b><span id="brandSub"></span></div>
+    </div>
+    <div class="tenant"><div class="tl1"><span id="tnLabel"></span><span class="okc" id="tnOk"></span></div><div class="tl2" id="tnName"></div></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="scope">
+      <div class="who"><div class="avatar">A</div><div class="wn"><b id="whoName"></b><small id="whoTeam"></small></div></div>
+      <label for="shiftSel" id="shiftLbl"></label>
+      <select id="shiftSel"></select>
+      <button class="btn" id="logoutBtn" style="justify-content:center;background:#0B1324;border-color:var(--rail-line);color:#C8D3E6"></button>
+    </div>
+  </aside>
+  <div class="main-col">
+    <div class="topbar">
+      <div class="crumb" id="crumb"></div>
+      <div class="tsearch"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" autocomplete="off"><div class="sres" id="sres"></div></div>
+      <div class="tacts">
+        <div class="langsw" role="group" id="langsw"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></div>
+        <button class="iconbtn" id="themeBtn"></button>
+        <button class="iconbtn" id="bellBtn"><svg class="i" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span class="dot" id="bellDot"></span></button>
+      </div>
+    </div>
+    <main id="main"></main>
+  </div>
+</div>
+<div class="dim" id="dim"><div class="modal" id="modal"></div></div>
+<div id="toasts"></div>
+
+<script>
+/* ============================ 다국어 ============================
+   ARCON · AI 오케스트레이션과 같은 방식: 한국어 원문을 키로 쓰고(t('작업지시') → 'Work Order'),
+   번역이 없으면 한국어를 보여 준다. 선택한 언어 · 테마는 브라우저에 기억한다. */
+const LANGS=[{id:'ko',short:'한',label:'한국어'},{id:'en',short:'EN',label:'English'},{id:'ja',short:'日',label:'日本語'}];
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+let LANG=(()=>{const v=lsGet('pop.lang');if(['ko','en','ja'].includes(v))return v;const n=(navigator.language||'ko').toLowerCase();return n.startsWith('ja')?'ja':n.startsWith('en')?'en':'ko'})();
+let THEME=lsGet('pop.theme')==='light'?'light':'dark';
+function t(ko,v){let s=LANG==='ko'?ko:((DICT[LANG]||{})[ko]??ko);return v?s.replace(/\{(\w+)\}/g,(m,k)=>k in v?String(v[k]):m):s}
+const LOC=()=>({ko:'ko-KR',en:'en-US',ja:'ja-JP'}[LANG]);
+const fmt=n=>(n===''||n==null)?'':Number(n).toLocaleString(LOC());
+
+/* ============================ 아이콘 ============================ */
+const IC={
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+  list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+  wrench:'<path d="M14.7 6.3a4 4 0 0 0 5 5L22 14l-8 8-2.3-2.3a4 4 0 0 0-5-5L4 12l8-8z"/>',
+  layers:'<path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/>',
+  flame:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2.1-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.3 1-3.3.5 1.5 1.6 2.8 2.5 2.8z"/>',
+  phone:'<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/>',
+  bell:'<path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+  play:'<path d="m6 4 14 8-14 8z"/>', pause:'<path d="M7 4h3v16H7zM14 4h3v16h-3z"/>', box:'<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/>',
+  alert:'<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  pkg:'<path d="M16.5 9.4 7.5 4.2M21 16V8l-9-5-9 5v8l9 5z"/>', tool:'<path d="M3 21l6-6M14 4l6 6-9 9-6-6z"/>',
+  flag:'<path d="M4 22V4M4 4h12l-2 4 2 4H4"/>', scan:'<path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"/>',
+  print:'<path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/>',
+  x:'<path d="M18 6 6 18M6 6l12 12"/>', check:'<path d="m5 12 5 5L20 7"/>', link:'<path d="M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 0 1 0 10h-2M8 12h8"/>',
+};
+const ic=n=>`<svg class="i" viewBox="0 0 24 24">${IC[n]}</svg>`;
+
+/* ============================ 샘플 데이터 (모두 가상) ============================ */
+const pad=n=>String(n).padStart(2,'0');
+const dstr=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const NOW=new Date(); const D0=dstr(NOW), D1=dstr(new Date(NOW-864e5)), D2=dstr(new Date(NOW-2*864e5)), D3=dstr(new Date(NOW-3*864e5));
+const ymd=d=>d.replace(/-/g,'').slice(2); const YMD=ymd(D0);
+const nowStr=()=>{const d=new Date();return `${dstr(d)} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`};
+const hm=()=>nowStr().slice(11,16);
+
+const LINES=[
+  {cd:'MC-101',nm:'가공 1라인',eq:'EQ-1101',eqn:'CNC 선반 #1'},
+  {cd:'MC-102',nm:'가공 2라인',eq:'EQ-1201',eqn:'머시닝센터 #2'},
+  {cd:'MC-103',nm:'가공 3라인 (용접)',eq:'EQ-1301',eqn:'로봇 용접기 #1'},
+  {cd:'MC-104',nm:'가공 4라인',eq:'EQ-1401',eqn:'호빙기 #1'},
+  {cd:'MC-105',nm:'가공 5라인 (작지생성)',eq:'EQ-1501',eqn:'연삭기 #1',gen:true},
+];
+const ITEMS=[
+  {cd:'HG-30120',nm:'감속기 하우징',dwg:'DWG-30120-R2'},
+  {cd:'SH-41205',nm:'입력축 샤프트',dwg:'DWG-41205-R1'},
+  {cd:'GR-52310',nm:'출력 기어',dwg:'DWG-52310-R3'},
+  {cd:'CS-60011',nm:'미션 케이스',dwg:'DWG-60011-R1'},
+  {cd:'FL-70420',nm:'플랜지 커버',dwg:'DWG-70420-R0'},
+];
+const item=cd=>ITEMS.find(i=>i.cd===cd)||ITEMS[0];
+let seq=0;
+function mkOrder(line,itemCd,proc,worker,date,time,qty,status,prod,regen){seq++;return {no:`WO${ymd(date)}-${String(seq).padStart(3,'0')}`,line,item:itemCd,proc,worker,start:`${date} ${time}`,qty,status,prod,regen:!!regen,bad:Math.round(prod*.012)}}
+const ORDERS=[
+  mkOrder('MC-101','HG-30120','OP10 선삭','작업자A',D0,'08:10',400,'대기',0),
+  mkOrder('MC-101','SH-41205','OP20 밀링','작업자A',D0,'08:30',250,'대기',0),
+  mkOrder('MC-101','CS-60011','OP10 선삭','작업자B',D1,'13:20',180,'작업대기',74),
+  mkOrder('MC-101','GR-52310','OP30 호빙','작업자B',D2,'09:00',300,'완료',300),
+  mkOrder('MC-101','HG-30120','OP10 선삭','작업자A',D3,'08:00',200,'완료',200,true),
+  mkOrder('MC-102','SH-41205','OP20 밀링','작업자C',D0,'08:00',320,'대기',0),
+  mkOrder('MC-102','CS-60011','OP20 밀링','작업자C',D1,'08:00',150,'완료',150),
+  mkOrder('MC-103','FL-70420','OP50 용접','작업자D',D0,'08:20',120,'대기',0),
+  mkOrder('MC-103','FL-70420','OP50 용접','작업자D',D1,'08:20',120,'설비고장',46),
+  mkOrder('MC-104','GR-52310','OP30 호빙','작업자E',D0,'09:00',260,'대기',0),
+  mkOrder('MC-104','GR-52310','OP30 호빙','작업자E',D2,'09:00',260,'완료',260),
+  mkOrder('MC-105','SH-41205','OP40 연삭','작업자F',D1,'14:00',90,'작업대기',30),
+  mkOrder('MC-105','HG-30120','OP40 연삭','작업자F',D2,'08:00',100,'완료',100),
+];
+const BOMS={
+  'HG-30120':[['BR-1001','베어링 6205','DWG-1001-R0',2],['OS-2003','오일씰 Ø45','DWG-2003-R1',1],['BT-3010','육각볼트 M8×25','KS B 1002',6]],
+  'SH-41205':[['KY-1105','평행 키 8×7','KS B 1311',1],['SN-1210','스냅링 Ø30','KS B 1336',2]],
+  'GR-52310':[['WS-1302','평와셔 M10','KS B 1326',4]],
+  'CS-60011':[['BR-1001','베어링 6205','DWG-1001-R0',2],['PL-1404','플러그 PT1/4','DWG-1404-R0',3],['OS-2003','오일씰 Ø45','DWG-2003-R1',2]],
+  'FL-70420':[['WR-7001','용접 와이어 Ø1.2','KS D 7025',1],['TP-7105','용접 팁 M6','DWG-7105-R0',2]],
+};
+const STOCK_PROCS=['선삭','밀링','호빙','연삭'];
+const BRK_CODES=[['BK-01','주축 이상'],['BK-02','유압 압력 저하'],['BK-03','센서 이상'],['BK-04','공구 파손'],['BK-05','냉각수 부족'],['BK-99','기타']];
+const brkName=cd=>(BRK_CODES.find(c=>c[0]===cd)||BRK_CODES[5])[1];
+const STOP_CODES=[['NS-01','소재대기'],['NS-02','작업준비'],['NS-03','작업대기'],['NS-04','설비점검'],['NS-05','설비고장'],['NS-06','품질 확인 대기']];
+const BAD_TYPES=['치수 불량','외관 찍힘','버(Burr)','기공','미가공'];
+
+const AS_PROCS=[{cd:'AS-210',nm:'하우징 압입'},{cd:'AS-220',nm:'기어 조립'},{cd:'AS-230',nm:'볼트 체결 (너트런너)'},{cd:'AS-240',nm:'누유 검사'},{cd:'AS-250',nm:'최종 검사'}];
+const AS_PRODS=[{cd:'RG-80100',nm:'감속기 ASSY (2단)'},{cd:'TM-90200',nm:'미션 ASSY (4단)'}];
+const asProd=cd=>AS_PRODS.find(p=>p.cd===cd)||AS_PRODS[0];
+const AS_ORDERS=[
+  {no:`WA${YMD}-001`,item:'RG-80100',ki:['K24-0101','K24-0102','K24-0103','K24-0104','K24-0105','K24-0106'],worker:'작업자G',start:`${D0} 08:00`,qty:6,status:'대기',done:0},
+  {no:`WA${YMD}-002`,item:'RG-80100',ki:['K24-0111','K24-0112','K24-0113'],worker:'작업자G',start:`${D0} 10:00`,qty:3,status:'대기',done:0},
+  {no:`WA${YMD}-003`,item:'TM-90200',ki:['K24-0201','K24-0202','K24-0203','K24-0204'],worker:'작업자H',start:`${D0} 13:00`,qty:4,status:'대기',done:0},
+  {no:`WA${ymd(D1)}-007`,item:'TM-90200',ki:['K24-0181','K24-0182','K24-0183'],worker:'작업자H',start:`${D1} 13:00`,qty:3,status:'작업대기',done:1},
+  {no:`WA${ymd(D2)}-004`,item:'RG-80100',ki:['K24-0091','K24-0092'],worker:'작업자G',start:`${D2} 09:00`,qty:2,status:'완료',done:2},
+];
+const AS_BOM={'RG-80100':[['HS-11020','하우징 (가공품)','DWG-11020-R2',1],['GR-52310','출력 기어','DWG-52310-R3',1],['SH-41205','입력축 샤프트','DWG-41205-R1',1],['BR-1001','베어링 6205','DWG-1001-R0',2],['BT-3010','육각볼트 M8×25','KS B 1002',8]],
+  'TM-90200':[['CS-60011','미션 케이스','DWG-60011-R1',1],['GR-52310','출력 기어','DWG-52310-R3',2],['SN-1210','스냅링 Ø30','KS B 1336',4],['OS-2003','오일씰 Ø45','DWG-2003-R1',2]]};
+const HT_LINES=[{cd:'HT-401',nm:'열처리 1라인 (연속 침탄로)'},{cd:'HT-402',nm:'열처리 2라인 (고주파)'}];
+
+/* ============================ 상태 ============================ */
+const S={page:'mc-perf',
+  mc:{line:null,order:null,status:'none',hold:null,auto:true,prod:0,cum:0,bad:0,lots:[],outs:[],chk:false,stock:[],stopMin:0},
+  as:{proc:null,order:null,status:'none',sel:0,chk:false},
+  wi:{mc:{tab:'설비고장관리',sel:null,q:'',from:D3,to:D0,brk:''},as:{tab:'설비고장관리',sel:null,q:'',from:D3,to:D0,brk:''}},
+  ht:{date:D0,q:'',rows:[]},
+  brks:[{no:`BD${ymd(D1)}-031`,menu:'가공',order:ORDERS[8].no,eq:'EQ-1301',eqn:'로봇 용접기 #1',cd:'BK-03',tx:'토치 위치 센서 신호 불안정',time:`${D1} 10:20`,end:'',photo:true,sent:true,state:'조치 중'},
+        {no:`BD${ymd(D2)}-027`,menu:'가공',order:ORDERS[3].no,eq:'EQ-1101',eqn:'CNC 선반 #1',cd:'BK-04',tx:'공구 마모로 교체',time:`${D2} 10:20`,end:`${D2} 10:45`,photo:false,sent:false,state:'완료'}],
+  brkSel:0, alarms:[], edits:{},
+};
+S.alarms=[
+  {id:1,cat:'설비보전',text:'EQ-1301 로봇 용접기 #1 고장을 조치하고 있습니다.',time:`${D1} 11:05`,read:false},
+  {id:2,cat:'품질',text:'OP10 선삭 작업표준서가 Rev.03으로 개정되었습니다.',time:`${D0} 07:40`,read:false},
+  {id:3,cat:'생산',text:'가공 1라인에 오늘 작업지시 2건이 내려왔습니다.',time:`${D0} 07:30`,read:true},
+];
+S.ht.rows=[['HG-30120',600,2,'08:40'],['GR-52310',480,0,'10:15'],['SH-41205',350,1,'11:50']].map((r,i)=>({lot:`HT${YMD}-${String(i+1).padStart(3,'0')}`,line:'HT-401',cd:r[0],g:r[1],b:r[2],d:D0,t:r[3],re:0}));
+S.ht.rows.push({lot:`HT${ymd(D1)}-014`,line:'HT-402',cd:'CS-60011',g:220,b:0,d:D1,t:'15:30',re:1});
+
+/* ============================ 공통 유틸 ============================ */
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(msg,variant='info'){const d=document.createElement('div');d.className='toast '+variant;d.textContent=msg;$('#toasts').appendChild(d);setTimeout(()=>d.remove(),3100)}
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+const STATUS_PILL={'대기':'p-acc','작업 중':'p-ok','작업대기':'p-line','비가동':'p-warn','설비고장':'p-crit','완료':'p-info','접수':'p-crit','조치 중':'p-warn'};
+const pill=s=>`<span class="pill ${STATUS_PILL[s]||'p-line'}">${t(s)}</span>`;
+const shiftNow=()=>($('#shiftSel')&&$('#shiftSel').value)||'주간';
+function table(id,cols,rows,{sel,empty='조회된 데이터가 없습니다.',click=true,align}={}){
+  const th=cols.map((c,i)=>`<th class="${align&&align[i]||''}">${t(c)}</th>`).join('');
+  const body=rows.length?rows.map((r,i)=>`<tr data-i="${i}" class="${click?'click':''} ${sel===i?'sel':''}">${r.map((c,j)=>`<td class="${align&&align[j]||''}">${c}</td>`).join('')}</tr>`).join('')
+    :`<tr><td class="empty" colspan="${cols.length}">${t(empty)}</td></tr>`;
+  return `<div class="tablewrap" id="${id}"><table><thead><tr>${th}</tr></thead><tbody>${body}</tbody></table></div>`;
+}
+function bindRows(id,fn){document.querySelectorAll(`#${id} tbody tr[data-i]`).forEach(tr=>tr.addEventListener('click',e=>{if(['INPUT','SELECT','BUTTON','OPTION'].includes(e.target.tagName))return;document.querySelectorAll(`#${id} tbody tr`).forEach(x=>x.classList.remove('sel'));tr.classList.add('sel');fn(+tr.dataset.i)}))}
+
+/* 모달: 언어를 바꾸면 열린 모달도 그 언어로 다시 그린다 */
+let MODAL=null;
+function openModal(fn,...args){MODAL={fn,args};drawModal()}
+function drawModal(){if(!MODAL)return;const m=MODAL.fn(...MODAL.args);if(!m){MODAL=null;return}
+  $('#modal').style.width=`min(${m.width||1100}px,100%)`;
+  $('#modal').innerHTML=`<header><h2>${m.title}${m.sub?`<small>${m.sub}</small>`:''}</h2><button class="iconbtn" onclick="closeModal()" aria-label="${t('닫기')}">${ic('x')}</button></header><div class="mb">${m.body}</div><footer>${m.foot||`<button class="btn" onclick="closeModal()">${t('닫기')}</button>`}</footer>`;
+  $('#dim').classList.add('on'); m.after&&m.after();}
+function closeModal(){MODAL=null;$('#dim').classList.remove('on')}
+$('#dim').addEventListener('click',e=>{if(e.target.id==='dim')closeModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();$('#sres').classList.remove('on')}});
+
+/* ============================ 틀 ============================ */
+const NAV=[
+  {sec:'POP 가공',items:[{id:'mc-perf',ic:'gear',nm:'실적정보',sm:'작업 시작 · 생산 입력 · 바코드'},{id:'mc-info',ic:'list',nm:'작업정보',sm:'설비고장 · 불량 · 비가동 · 실적'}]},
+  {sec:'POP 조립',items:[{id:'as-perf',ic:'layers',nm:'실적정보',sm:'기대번호 · BOM · 공정종료'},{id:'as-info',ic:'list',nm:'작업정보',sm:'설비고장 · 불량 · 비가동 · 실적'}]},
+  {sec:'POP 열처리',items:[{id:'ht-out',ic:'flame',nm:'출고처리',sm:'LOT 바코드 발행 · 재발행'}]},
+  {sec:'공통',items:[{id:'mobile',ic:'phone',nm:'설비고장 사진 등록',sm:'QR 스캔 · 모바일'},{id:'alarm',ic:'bell',nm:'알림',sm:'설비 · 품질 · 생산 알림'}]},
+];
+const PAGE_SEC={'mc-perf':'POP 가공','mc-info':'POP 가공','as-perf':'POP 조립','as-info':'POP 조립','ht-out':'POP 열처리','mobile':'공통','alarm':'공통'};
+function pageName(id){for(const s of NAV)for(const it of s.items)if(it.id===id)return it.nm;return ''}
+function go(p){S.page=p;closeModal();render();window.scrollTo(0,0)}
+function shell(){
+  document.documentElement.lang=LANG;document.documentElement.dataset.theme=THEME;document.title=t('자동차부품 제조업 POP');
+  $('#brandName').textContent=t('자동차부품 제조업 POP');$('#brandSub').textContent=t('현장 실적관리 시스템');
+  $('#tnLabel').textContent=t('제1공장');$('#tnOk').textContent=t('MES 연결 정상');$('#tnName').textContent=t('생산1팀 · {s} 근무',{s:t(shiftNow())});
+  const unread=S.alarms.filter(a=>!a.read).length;
+  $('#nav').innerHTML=NAV.map(s=>`<div class="sec">${t(s.sec)}</div>`+s.items.map(it=>`<a data-p="${it.id}" ${S.page===it.id?'aria-current="page"':''} onclick="go('${it.id}')">${ic(it.ic)}<div class="nl"><span>${t(it.nm)}</span><small>${t(it.sm)}</small></div>${it.id==='alarm'&&unread?`<span class="badge-n">${unread}</span>`:''}</a>`).join('')).join('');
+  $('#whoName').textContent=t('작업자A');$('#whoTeam').textContent=t('생산1팀 · 가공반');
+  $('#shiftLbl').textContent=t('근무 구분');
+  const sv=shiftNow();$('#shiftSel').innerHTML=['주간','야간'].map(x=>`<option value="${x}" ${x===sv?'selected':''}>${t(x)} (${x==='주간'?'08:00~17:00':'20:00~05:00'})</option>`).join('');
+  $('#logoutBtn').textContent=t('로그아웃');
+  $('#crumb').innerHTML=`${t(PAGE_SEC[S.page])} <span>›</span> <b>${t(pageName(S.page))}</b>`;
+  $('#q').placeholder=t('작업지시번호 · 품목 · LOT 검색');
+  $('#langsw').querySelectorAll('button').forEach(b=>b.remove());
+  LANGS.forEach(l=>{const b=document.createElement('button');b.textContent=l.short;b.title=l.label;b.className=LANG===l.id?'on':'';b.onclick=()=>{LANG=l.id;lsSet('pop.lang',l.id);render();drawModal()};$('#langsw').appendChild(b)});
+  $('#langsw').setAttribute('aria-label',t('언어'));
+  $('#themeBtn').innerHTML=THEME==='light'?ic('moon'):ic('sun');$('#themeBtn').title=t('테마 전환');
+  $('#bellDot').style.display=unread?'block':'none';$('#bellBtn').title=t('알림');
+}
+$('#themeBtn').onclick=()=>{THEME=THEME==='light'?'dark':'light';lsSet('pop.theme',THEME);render()};
+$('#bellBtn').onclick=()=>go('alarm');
+$('#logoutBtn').onclick=()=>{const left=ORDERS.some(o=>o.status==='작업 중')||AS_ORDERS.some(o=>o.status==='작업 중');toast(left?t('진행 중인 작업이 있습니다. 작업대기나 작업종료 후 로그아웃하세요.'):t('로그아웃되었습니다. (목업에서는 화면이 유지됩니다)'),left?'warning':'info')};
+$('#shiftSel').onchange=()=>{render();toast(t('근무 구분이 {s}(으)로 바뀌었습니다.',{s:t(shiftNow())}),'success')};
+
+/* 상단 검색: 작업지시 · 품목 · LOT */
+$('#q').addEventListener('input',search);$('#q').addEventListener('focus',search);
+$('#q').addEventListener('keydown',e=>{if(e.key==='Enter'){const b=$('#sres button');if(b)b.click()}});
+document.addEventListener('click',e=>{if(!e.target.closest('.tsearch'))$('#sres').classList.remove('on')});
+function search(){
+  const q=$('#q').value.trim().toUpperCase();const box=$('#sres');if(!q){box.classList.remove('on');return}
+  const res=[];
+  ORDERS.forEach(o=>{if((o.no+o.item+t(item(o.item).nm)).toUpperCase().includes(q))res.push({k:'mc',o,label:o.no,sub:`${t('POP 가공')} · ${o.line} · ${o.item} ${t(item(o.item).nm)} · ${t(o.status)}`})});
+  AS_ORDERS.forEach(o=>{if((o.no+o.item+t(asProd(o.item).nm)+o.ki.join()).toUpperCase().includes(q))res.push({k:'as',o,label:o.no,sub:`${t('POP 조립')} · ${o.item} ${t(asProd(o.item).nm)} · ${t(o.status)}`})});
+  S.ht.rows.forEach(r=>{if((r.lot+r.cd+t(item(r.cd).nm)).toUpperCase().includes(q))res.push({k:'ht',r,label:r.lot,sub:`${t('POP 열처리')} · ${r.cd} ${t(item(r.cd).nm)} · ${r.d}`})});
+  box.innerHTML=res.length?res.slice(0,10).map((r,i)=>`<button data-i="${i}"><span class="mono">${r.label}</span><small>${esc(r.sub)}</small></button>`).join(''):`<div class="muted small" style="padding:10px">${t('검색 결과가 없습니다.')}</div>`;
+  box.classList.add('on');
+  box.querySelectorAll('button').forEach(b=>b.onclick=()=>{const r=res[+b.dataset.i];box.classList.remove('on');$('#q').value='';
+    if(r.k==='mc'){if(!S.mc.line||S.mc.line.cd!==r.o.line)pickLineObj(LINES.find(l=>l.cd===r.o.line));const w=S.wi.mc;Object.assign(w,{q:r.o.no,from:'',to:'',brk:'',sel:0});go('mc-info')}
+    else if(r.k==='as'){if(!S.as.proc)S.as.proc=AS_PROCS[0];const w=S.wi.as;Object.assign(w,{q:r.o.no,from:'',to:'',brk:'',sel:0});go('as-info')}
+    else{S.ht.q=r.r.cd;S.ht.date=r.r.d;go('ht-out')}});
+}
+setInterval(()=>{document.querySelectorAll('.clock').forEach(c=>c.textContent=nowStr())},1000);
+
+const AFTER=[];
+function render(){shell();
+  const P={'mc-perf':mcPerf,'mc-info':()=>workInfo('mc'),'as-perf':asPerf,'as-info':()=>workInfo('as'),'ht-out':htOut,'mobile':mobile,'alarm':alarmPage};
+  $('#main').innerHTML=P[S.page]();AFTER.splice(0).forEach(f=>f());}
+
+/* ============================ POP 가공 · 실적정보 ============================ */
+const ST_NAME={none:'작업을 선택해주세요.',run:'작업 중',wait:'작업 대기',stop:'비가동',brk:'설비고장',done:'작업 완료'};
+function stateBox(st,extra){return `<div class="state s-${st}"><span class="dot"></span><div><b>${t(ST_NAME[st])}</b>${extra?`<div class="small muted">${extra}</div>`:''}</div></div>`}
+const lineOf=cd=>LINES.find(l=>l.cd===cd);
+const HOLD_NM={소재:'소재대기',준비:'작업준비',대기:'작업대기'};
+function mcPerf(){
+  const M=S.mc,o=M.order,L=M.line;
+  const rate=o?pct(M.cum,o.qty):0, it=o?item(o.item):null;
+  const st=o?Math.round(o.qty*.8):0, at=Math.round(M.cum*.96);
+  const kv=(k,v)=>`<dt>${t(k)}</dt><dd title="${esc(String(v).replace(/<[^>]+>/g,''))}">${v||'<span class="muted">-</span>'}</dd>`;
+  AFTER.push(()=>{const i=$('#prodIn');if(i)i.addEventListener('keydown',e=>{if(e.key==='Enter')saveProd()})});
+  return `
+  <div class="head"><div><h1>${t('POP 가공')} · ${t('실적정보')}</h1><p class="lede">${L?`${L.cd} / ${t(L.nm)} · ${L.eq} ${t(L.eqn)}`:t('먼저 [라인선택]으로 이 단말이 담당할 가공 라인을 고르세요.')}</p></div>
+    <div class="acts"><span class="clock">${nowStr()}</span><button class="btn primary lg" id="btnLine" onclick="openModal(mLine)">${ic('link')}${t('라인선택')}</button></div></div>
+  <div class="grid g4" style="margin-bottom:14px">
+    <div class="panel kpi"><span class="kl">${t('작업지시 진행율')}</span><span class="kv num">${rate}%</span><div class="bar"><i style="width:${Math.min(rate,100)}%"></i></div><span class="kd">${o?`${fmt(M.cum)} / ${fmt(o.qty)} EA`:'-'}</span></div>
+    <div class="panel kpi"><span class="kl">${t('작업 상태')}</span>${stateBox(M.status,o?`${t(o.regen?'재생':'일반')}${M.hold?' · '+t(HOLD_NM[M.hold]):''}`:'')}</div>
+    <div class="panel kpi"><span class="kl">${t('목표대비 달성율')}</span><span class="kv num">${o?pct(at,st):0}%</span><div class="bar" style="--bc:var(--accent)"><i style="width:${o?Math.min(pct(at,st),100):0}%"></i></div><span class="kd">AT ${fmt(at)} · ST ${fmt(st)} · ${t('표준작업시간')} ${o?'45s/EA':'-'}</span></div>
+    <div class="panel kpi"><span class="kl">${t('설비 모드')}</span>
+      <div style="display:flex;gap:6px;margin-top:4px"><button class="chip" aria-pressed="${M.auto}" onclick="setAuto(true)">${t('자동 모드')}</button><button class="chip" aria-pressed="${!M.auto}" onclick="setAuto(false)">${t('수동 모드')}</button></div>
+      <span class="kd" style="margin-top:6px">${M.auto?t('설비 카운터로 생산수량이 자동 집계됩니다.'):t('생산수량을 직접 입력해 저장합니다.')}</span></div>
+  </div>
+  <div class="pop">
+    <div class="stack">
+      <section class="panel"><header><h2>${t('작업지시 정보')}</h2><button class="btn" ${o?'':'disabled'} onclick="openModal(mDoc,'도면')">${t('도면')}</button></header>
+        <dl class="kv">${kv('작업지시번호',o?`<span class="mono">${o.no}</span>`:'')}${kv('전 작업(라인)',o?t('소재 입고 (자재창고)'):'')}${kv('현재 공정(라인)',o?`${t(o.proc)} (${t(L.nm)})`:'')}${kv('후 공정(라인)',o?t('열처리 1라인 (연속 침탄로)'):'')}
+        ${kv('작업자 / 부서명',o?`${t(o.worker)} / ${t('생산1팀')}`:'')}${kv('제품코드 / 제품명',o?`${o.item} / ${t(it.nm)}`:'')}${kv('도면번호',o?it.dwg:'')}${kv('설비코드 / 설비명',o?`${L.eq} / ${t(L.eqn)}`:'')}
+        ${kv('작업시작일자',o?o.start:'')}${kv('작업(근무) 구분',o?t(shiftNow()):'')}</dl></section>
+      <section class="panel"><header><h2>${t('생산')}</h2><button class="btn primary" id="btnSave" ${o&&M.status==='run'?'':'disabled'} onclick="saveProd()">${t('저장')}</button></header>
+        <div class="grid g2" style="align-items:end">
+          <div class="fld">${t('생산수량(EA)')}<input id="prodIn" class="numin" type="number" min="0" placeholder="0" ${o&&M.status==='run'&&!M.auto?'':'disabled'} value="${o&&M.auto?M.prod:''}"></div>
+          <div class="kpi"><span class="kl">${t('누적생산수량(EA)')}</span><span class="kv num">${fmt(M.cum)}</span></div>
+        </div>
+        ${o&&M.auto&&M.status==='run'?`<p class="note" style="margin-top:10px">${t('자동 모드에서는 설비 카운터 값이 생산수량에 쌓입니다. [저장]을 누르면 누적생산수량에 반영됩니다.')}</p>`:''}</section>
+      <section class="panel"><header><h2>${t('바코드 출력')} · ${t('문서')}</h2><div class="hs"><button class="btn" ${o?'':'disabled'} onclick="openModal(mPrintDetail)">${t('상세')}</button><button class="btn primary" id="btnPrint" ${o&&M.status==='run'?'':'disabled'} onclick="openModal(mPrint)">${ic('print')}${t('바코드 출력')}</button></div></header>
+        <div class="docs">
+          <button class="doc" ${o?'':'disabled'} onclick="openModal(mDoc,'작업표준서')">${t('작업표준서')}<small>Rev.03</small></button>
+          <button class="doc" ${o?'':'disabled'} onclick="openModal(mDoc,'Q-Point')">Q-Point<small>${t('중점 관리 항목')}</small></button>
+          <button class="doc" ${o?'':'disabled'} onclick="openModal(mDoc,'관리계획서')">${t('관리계획서')}<small>Rev.02</small></button>
+          <button class="doc" id="btnCheck" ${o?'':'disabled'} onclick="openModal(mCheck)">${t('체크시트')}<small class="${o&&!M.chk?'req':''}">${o?(M.chk?t('작성 완료'):t('미작성')):'-'}</small></button>
+        </div></section>
+    </div>
+    <section class="panel">
+      <div class="sub-h">${t('LOT 투입')}<span style="display:flex;gap:8px;align-items:center"><small>${t('전체 : {n} 건',{n:M.lots.length})}</small><button class="btn" id="btnScan" ${o&&M.status!=='done'?'':'disabled'} onclick="openModal(mScan,'lot')">${ic('scan')}${t('바코드R')}</button></span></div>
+      ${table('g03',['작업공정','품목코드','품목명','투입량','Lot No.'],M.lots.map(l=>[t(l.proc),l.cd,t(l.nm),fmt(l.qty),`<span class="mono">${l.lot}</span>`]),{click:false,empty:'투입된 소재 LOT가 없습니다.',align:['','','','r','']})}
+      <div class="sub-h">${t('부품 투입(BOM)')}<small>${t('전체 : {n} 건',{n:o?(BOMS[o.item]||[]).length:0})}</small></div>
+      ${table('g01',['부품코드','부품명','도면번호','소요량'],o?(BOMS[o.item]||[]).map(b=>[b[0],t(b[1]),b[2],b[3]]):[],{click:false,align:['','','','r']})}
+      <div class="sub-h">${t('공정 출고 (합계 : {n})',{n:M.outs.reduce((a,x)=>a+x.cart,0)})}<small>${t('전체 : {n} 건',{n:M.outs.length})}</small></div>
+      ${table('g02',['이동대차수','바코드 출력 장수','수량','Lot No.'],M.outs.map(x=>[x.cart,x.prints,fmt(x.qty),`<span class="mono">${x.lot}</span>`]),{click:false,empty:'출고 내역이 없습니다.',align:['r','r','r','']})}
+      <div class="sub-h">${t('재고 조회')}<small>${t('전체 : {n} 건',{n:M.stock.length})}</small></div>
+      ${table('g04',['공정','공정명','재고위치','품목코드','품목명','재고량'],M.stock.map(s=>[s[0],t(s[1]),s[2],s[3],t(item(s[3]).nm),fmt(s[4])]),{click:false,empty:'라인을 선택하면 재고가 표시됩니다.',align:['','','','','','r']})}
+    </section>
+    <div class="acts-col">
+      <button class="abtn" id="aStatus" onclick="openModal(mStatus)">${ic('list')}${t('작업현황')}</button>
+      <button class="abtn" id="aOrder" onclick="openOrderModal()">${ic('play')}${t('작업지시')}</button>
+      <button class="abtn crit" id="aBreak" onclick="needWork('mc',()=>openModal(mBreak,'mc'))">${ic('alert')}${t('설비고장')}</button>
+      <button class="abtn" id="aPart" onclick="needWork('mc',()=>openModal(mPartReq))">${ic('pkg')}${t('부품요청')}</button>
+      ${holdBtn('소재','pkg')}${holdBtn('준비','tool')}${holdBtn('대기','pause')}
+      <button class="abtn end" id="aFinish" onclick="needWork('mc',()=>openModal(mFinish),true)">${ic('flag')}${t('작업종료')}</button>
+    </div>
+  </div>
+  <section class="panel" style="margin-top:14px"><header><h2>${t('작업 집계')}</h2><span class="muted small">${o?`${o.no} · ${t(it.nm)}`:''}</span></header>
+    ${table('g05',['계획수량(EA)','생산수량(EA)','양품수량(EA)','불량수량(EA)','생산율(%)','총근무시간(분)','가동시간(분)','비가동시간(분)'],
+      o?[[fmt(o.qty),fmt(M.cum),fmt(M.cum-M.bad),fmt(M.bad),pct(M.cum,o.qty),480,480-(M.stopMin||14),M.stopMin||14]]:[],{click:false,empty:'작업을 시작하면 집계가 표시됩니다.',align:Array(8).fill('r')})}</section>`;
+}
+function holdBtn(k,icn){const M=S.mc;
+  if(M.hold===k)return `<button class="abtn go" id="h${k}" onclick="hold('${k}')">${ic('play')}${t('작업재시작')}<span class="pill p-warn" style="margin-left:auto">${t(HOLD_NM[k]+'중')}</span></button>`;
+  return `<button class="abtn" id="h${k}" onclick="hold('${k}')">${ic(icn)}${t(HOLD_NM[k])}</button>`}
+function setAuto(v){S.mc.auto=v;S.mc.prod=0;render()}
+function needWork(k,fn,runOnly){
+  if(k==='mc'){const M=S.mc;if(!M.line)return toast(t('라인을 선택해주세요.'),'warning');if(!M.order)return toast(t('작업을 선택해주세요.'),'warning');if(M.status==='done')return toast(t('완료된 작업입니다.'),'warning');if(runOnly&&M.status==='brk')return toast(t('설비고장 상태입니다. 조치가 끝나면 [작업현황]에서 재시작하세요.'),'warning')}
+  else{const A=S.as;if(!A.proc)return toast(t('공정을 선택해주세요.'),'warning');if(!A.order)return toast(t('작업을 선택해주세요.'),'warning');if(A.status==='done')return toast(t('완료된 작업입니다.'),'warning');if(runOnly&&A.status!=='run')return toast(t('작업 중이 아닙니다.'),'warning')}
+  fn();
+}
+function hold(k){needWork('mc',()=>{const M=S.mc;
+  if(M.status==='brk')return toast(t('설비고장 상태입니다. 조치가 끝나면 [작업현황]에서 재시작하세요.'),'warning');
+  if(M.hold===k){M.hold=null;M.status='run';M.order.status='작업 중';toast(t('작업 중으로 돌아왔습니다.'),'success')}
+  else{M.hold=k;M.status=k==='대기'?'wait':'stop';M.order.status=k==='대기'?'작업대기':'비가동';M.stopMin=(M.stopMin||14)+6;
+    toast(t('{s} 상태로 바뀌었습니다. 비가동 시간이 기록됩니다.',{s:t(HOLD_NM[k])}),'info')}
+  render()})}
+function saveProd(){const M=S.mc;if(!M.order||M.status!=='run')return;
+  const v=M.auto?M.prod:+($('#prodIn').value||0);
+  if(!v||v<0)return toast(t('생산수량을 입력해주세요.'),'warning');
+  M.cum+=v;M.order.prod=M.cum;M.prod=0;if(v>=20)M.bad+=1;M.order.bad=M.bad;toast(t('생산수량 {n}EA가 저장되었습니다.',{n:v}),'success');render()}
+setInterval(()=>{const M=S.mc;if(M.order&&M.status==='run'&&M.auto){M.prod+=1;const i=$('#prodIn');if(i&&S.page==='mc-perf')i.value=M.prod}},2500);
+
+/* 라인선택 */
+function mLine(){const f=S._lf||(S._lf={a:'',b:''});
+  const rows=LINES.filter(l=>l.cd.includes(f.a.toUpperCase())&&l.eq.includes(f.b.toUpperCase()));
+  return {title:t('라인변경'),sub:t('가공 라인 목록'),width:960,body:`
+    <div class="toolbar"><div class="fld">${t('라인코드')}<input class="input" id="lfa" value="${esc(f.a)}" placeholder="MC-101"></div><div class="fld">${t('설비코드')}<input class="input" id="lfb" value="${esc(f.b)}" placeholder="EQ-1101"></div>
+    <button class="btn primary" onclick="S._lf={a:lfa.value,b:lfb.value};drawModal()">${t('검색')}</button><button class="btn" onclick="S._lf={a:'',b:''};drawModal()">${t('초기화')}</button></div>
+    ${table('lineG',['No','라인코드','라인명','대표설비코드','대표설비명'],rows.map((l,i)=>[i+1,l.cd,t(l.nm),l.eq,t(l.eqn)]),{sel:rows.indexOf(S._lsel),empty:'조건에 맞는 라인이 없습니다.'})}`,
+    foot:`<button class="btn" onclick="closeModal()">${t('닫기')}</button><button class="btn primary" id="lineOk" onclick="pickLine()">${t('변경')}</button>`,
+    after:()=>{bindRows('lineG',i=>S._lsel=rows[i]);['lfa','lfb'].forEach(id=>$('#'+id).addEventListener('keydown',e=>{if(e.key==='Enter'){S._lf={a:lfa.value,b:lfb.value};drawModal()}}))}}}
+function pickLine(){if(!S._lsel)return toast(t('하나의 항목을 선택해주세요.'),'warning');pickLineObj(S._lsel);closeModal();render();toast(t('{l} 라인으로 변경되었습니다.',{l:`${S.mc.line.cd} / ${t(S.mc.line.nm)}`}),'success')}
+function pickLineObj(L){const M=S.mc;if(M.order&&M.order.status==='작업 중')M.order.status='작업대기';
+  Object.assign(M,{line:L,order:null,status:'none',hold:null,prod:0,cum:0,bad:0,lots:[],outs:[],chk:false,stopMin:0});
+  const its=[...new Set(ORDERS.filter(o=>o.line===L.cd).map(o=>o.item))];
+  M.stock=its.map((cd,i)=>[`OP${(i+1)*10}`,STOCK_PROCS[i%4],`${L.cd}-A${i+1}`,cd,[1240,380,95,410][i%4]]);
+  S.wi.mc.sel=null;}
+
+/* 작업지시 */
+function openOrderModal(){if(!S.mc.line)return toast(t('라인을 선택해주세요.'),'warning');
+  S._oleft=ORDERS.filter(o=>o.line===S.mc.line.cd&&['작업대기','비가동','설비고장'].includes(o.status)&&o!==S.mc.order).length;
+  S._osel=null;openModal(mOrder)}
+function mOrder(){const L=S.mc.line;const rows=ORDERS.filter(o=>o.line===L.cd&&o.status==='대기');
+  return {title:t('작업지시'),sub:t('조회 건수 {n}건',{n:rows.length}),width:1200,body:`
+    ${S._oleft?`<p class="note warn">${t('이전에 멈춘 작업지시가 {n}건 있습니다. [작업현황]에서 불러와 재시작할 수 있습니다.',{n:S._oleft})}</p>`:''}
+    ${table('ordG',['작업지시번호','제품번호','제품명','공정','작업자','시작일자','지시수량','진행상태'],rows.map(o=>[`<span class="mono">${o.no}</span>`,o.item,t(item(o.item).nm),t(o.proc),t(o.worker),o.start,fmt(o.qty),pill(o.status)]),{empty:'내려온 작업지시가 없습니다.',sel:rows.indexOf(S._osel),align:['','','','','','','r','']})}
+    ${L.gen?`<div class="panel" style="padding:12px;box-shadow:none;background:var(--surface2)"><div class="sub-h">${t('작업지시 생성')}<small>${t('작업지시 생성이 허용된 라인입니다.')}</small></div>
+      <div class="toolbar" style="margin:0"><div class="fld" style="flex:1">${t('품목')}<input class="input" id="genItem" readonly value="${S._gen?`${S._gen.cd} ${t(S._gen.nm)}`:''}" placeholder="${t('[품목검색]으로 선택')}"></div>
+      <button class="btn" onclick="S._isel=null;openModal(mItemSearch)">${t('품목검색')}</button><div class="fld">${t('수량')}<input class="input" id="genQty" type="number" value="100" style="width:110px"></div><button class="btn primary" onclick="genOrder()">${t('작지생성')}</button></div></div>`:''}`,
+    foot:`<button class="btn" onclick="closeModal()">${t('닫기')}</button><button class="btn primary" id="startBtn" ${S._osel?'':'disabled'} onclick="startWork()">${ic('play')}${t('작업시작')}</button>`,
+    after:()=>bindRows('ordG',i=>{S._osel=rows[i];$('#startBtn').disabled=false})}}
+function mItemSearch(){const f=S._isf||(S._isf={k:'품목명',v:''});const v=f.v.toUpperCase();const rows=ITEMS.filter(i=>!v||(f.k==='품목코드'?i.cd:f.k==='도번'?i.dwg:t(i.nm)).toUpperCase().includes(v));
+  return {title:t('품목 검색'),width:800,body:`<div class="toolbar"><div class="fld">${t('조회구분')}<select class="input" id="isk">${['품목코드','품목명','도번'].map(k=>`<option value="${k}" ${f.k===k?'selected':''}>${t(k)}</option>`).join('')}</select></div><div class="fld" style="flex:1">${t('검색어')}<input class="input" id="isv" value="${esc(f.v)}"></div><button class="btn primary" onclick="S._isf={k:isk.value,v:isv.value};drawModal()">${t('조회')}</button></div>
+    ${table('isG',['품목코드','품목명','도번'],rows.map(i=>[i.cd,t(i.nm),i.dwg]),{sel:rows.indexOf(S._isel)})}`,
+    foot:`<button class="btn" onclick="openModal(mOrder)">${t('닫기')}</button><button class="btn primary" id="isOk" onclick="if(!S._isel)return toast(t('품목을 선택해주세요.'),'warning');S._gen=S._isel;openModal(mOrder)">${t('선택')}</button>`,
+    after:()=>bindRows('isG',i=>S._isel=rows[i])}}
+function genOrder(){if(!S._gen)return toast(t('품목을 먼저 선택해주세요.'),'warning');const q=+$('#genQty').value||0;if(q<=0)return toast(t('수량을 입력해주세요.'),'warning');
+  const o=mkOrder(S.mc.line.cd,S._gen.cd,'OP40 연삭','작업자A',D0,hm(),q,'대기',0);ORDERS.unshift(o);S._gen=null;S._osel=o;drawModal();toast(t('작업지시 {no}가 생성되었습니다.',{no:o.no}),'success')}
+function startWork(){const o=S._osel;if(!o)return;const M=S.mc;
+  if(M.order&&M.lots.length&&M.status!=='done'){openModal(mRemain,o);return}
+  doStart(o)}
+function mRemain(o){const M=S.mc;return {title:t('잔량처리'),sub:t('이전 작업의 소재 LOT 잔량'),width:760,body:table('remG',['제품번호','바코드'],M.lots.map(l=>[M.order.item,`<span class="mono">${l.lot}</span>`]),{click:false}),
+  foot:`<button class="btn" onclick="doStart(MODAL.args[0])">${t('닫기')}</button><button class="btn primary" onclick="toast(t('잔량이 처리되었습니다.'),'success');doStart(MODAL.args[0])">${t('처리')}</button>`}}
+function doStart(o){const M=S.mc;if(M.order&&M.order!==o&&M.order.status==='작업 중')M.order.status='작업대기';
+  o.status='작업 중';Object.assign(M,{order:o,status:'run',hold:null,prod:0,cum:o.prod||0,bad:o.bad||0,lots:[],outs:[],chk:false,stopMin:0});closeModal();render();toast(t('작업이 시작되었습니다.'),'success')}
+
+/* 작업현황 */
+function mStatus(){if(!S.mc.line){toast(t('라인을 선택해주세요.'),'warning');return null}
+  const list=ORDERS.filter(o=>o.line===S.mc.line.cd&&o.status!=='대기');
+  return {title:t('작업현황'),sub:t(S.mc.line.nm),width:1400,body:table('stG',['작업지시번호','작업일자','공정','제품번호','제품명','재생구분','작업자','지시수량','작업실적 수량','진행상태','작업대기 시작시간','재시작 시간'],
+    list.map(o=>[`<span class="mono">${o.no}</span>`,o.start.slice(0,10),t(o.proc),o.item,t(item(o.item).nm),t(o.regen?'재생':'일반'),t(o.worker),fmt(o.qty),fmt(o.prod),pill(o.status),o.waitAt||(o.status==='작업대기'?o.start.slice(0,10)+' 16:40':''),o.restartAt||'']),{empty:'진행 중인 작업이 없습니다.',sel:list.indexOf(S._st),align:['','','','','','','','r','r','','','']}),
+    foot:`<button class="btn" onclick="closeModal()">${t('닫기')}</button><button class="btn" id="stToggle" onclick="stAct('toggle')">${t('재시작 / 작업대기')}</button><button class="btn primary" id="stLoad" onclick="stAct('load')">${t('불러오기')}</button>`,
+    after:()=>bindRows('stG',i=>S._st=list[i])}}
+function stAct(k){const o=S._st;const M=S.mc;if(!o||o.line!==M.line.cd||o.status==='대기')return toast(t('작업현황을 선택해주세요.'),'warning');
+  if(o.status==='완료')return toast(t('완료된 작업입니다.'),'warning');
+  if(k==='load'){if(M.order&&M.order!==o&&M.order.status==='작업 중')M.order.status='작업대기';
+    const map={'작업 중':'run','작업대기':'wait','비가동':'stop','설비고장':'brk'};
+    Object.assign(M,{order:o,status:map[o.status]||'run',hold:o.status==='작업대기'?'대기':null,cum:o.prod,bad:o.bad,prod:0,lots:[],outs:[],chk:false});
+    closeModal();render();toast(t('작업을 불러왔습니다.'),'success')}
+  else{if(o.status==='작업 중'){o.status='작업대기';o.waitAt=nowStr().slice(0,16);toast(t('작업대기로 바뀌었습니다.'),'info')}
+    else{o.status='작업 중';o.restartAt=nowStr().slice(0,16);toast(t('작업이 재시작되었습니다.'),'success');const b=S.brks.find(b=>b.order===o.no&&b.state!=='완료');if(b){b.state='완료';b.end=nowStr().slice(0,16)}}
+    if(o===M.order){M.status=o.status==='작업대기'?'wait':'run';M.hold=o.status==='작업대기'?'대기':null}
+    render();drawModal()}}
+
+/* 바코드 스캔 */
+function mScan(kind){const A=S.as;const def=kind==='lot'?`LT${YMD}-A${String(S.mc.lots.length+1).padStart(3,'0')}`:A.order.ki[Math.min(A.order.done,A.order.ki.length-1)];
+  return {title:t('바코드 입력'),width:640,body:`<p class="note">${t('바코드를 스캔하거나 직접 입력한 뒤 [완료]를 누르세요.')}</p><input id="scanIn" class="numin" style="text-align:left" value="${def}">${kind==='ki'?`<p class="small muted" style="margin:0">${t('입력 가능한 기대번호')}: <span class="mono">${A.order.ki.join(', ')}</span></p>`:''}`,
+    foot:`<button class="btn" onclick="closeModal()">${t('닫기')}</button><button class="btn primary" id="scanOk" onclick="scanDone('${kind}')">${t('완료')}</button>`,
+    after:()=>{const i=$('#scanIn');i.select();i.addEventListener('keydown',e=>{if(e.key==='Enter')scanDone(kind)})}}}
+function scanDone(kind){const v=$('#scanIn').value.trim();if(!v)return toast(t('바코드를 입력해주세요.'),'warning');
+  if(kind==='lot'){const M=S.mc;if(M.lots.some(l=>l.lot===v))return toast(t('이미 투입된 LOT입니다.'),'warning');M.lots.push({proc:'소재 투입',cd:'RM-'+M.order.item.slice(3),nm:'단조 소재',qty:M.order.qty,lot:v});closeModal();render();toast(t('소재 LOT가 투입되었습니다.'),'success')}
+  else{const A=S.as;const i=A.order.ki.indexOf(v);if(i<0)return toast(t('이 작업지시의 기대번호가 아닙니다.'),'error');if(i<A.order.done)return toast(t('이미 완료된 기대번호입니다.'),'warning');A.sel=i;closeModal();render();toast(t('기대번호 {k}가 지정되었습니다.',{k:v}),'success')}}
+
+/* 바코드 출력 */
+const nextLot=n=>`PL${YMD}-${String(S.mc.outs.length+1+(n||0)).padStart(3,'0')}`;
+function labelHtml(o,q,lot,team,nm,proc){return `<div class="label"><div style="text-align:center;font-weight:800;font-size:16px;margin-bottom:8px">${t('LOT 식별표')}</div><table>
+  <tr><th>${t('작업반명')}</th><td>${team}</td></tr><tr><th>${t('품번')}</th><td>${o.item||o.cd}</td></tr><tr><th>${t('품명')}</th><td>${nm}</td></tr>
+  <tr><th>${t('수량')}</th><td>${fmt(q)} EA</td></tr><tr><th>${t('공정명')}</th><td>${proc}</td></tr><tr><th>${t('작지번호')}</th><td>${o.no||'-'}</td></tr><tr><th>${t('생산일자')}</th><td>${D0}</td></tr></table>
+  <div class="bars"></div><div style="text-align:center;font-family:monospace;letter-spacing:3px">${lot}</div></div>`}
+function mPrint(){const o=S.mc.order;const f=S._pf||(S._pf={c:1,q:50});
+  return {title:t('바코드 출력'),sub:t('이동대차 단위 LOT 식별표 발행'),body:`
+    ${table('prG',['작업지시번호','제품코드','제품명','이동대차수','수량','Lot No.'],[[`<span class="mono">${o.no}</span>`,o.item,t(item(o.item).nm),`<input id="pc" type="number" min="1" value="${f.c}">`,`<input id="pq" type="number" min="1" value="${f.q}">`,`<span class="mono">${nextLot()}${f.c>1?' ~ '+nextLot(f.c-1).slice(-3):''}</span>`]],{click:false})}
+    <div style="display:flex;justify-content:center">${labelHtml(o,f.q,nextLot(),`${t('생산1팀')} ${t(S.mc.line.nm)}`,t(item(o.item).nm),t(o.proc))}</div>`,
+    foot:`<button class="btn danger" onclick="S._pf={c:1,q:0};drawModal()">${t('삭제')}</button><button class="btn" onclick="closeModal()">${t('취소')}</button><button class="btn primary" id="printOk" onclick="doPrint()">${ic('print')}${t('저장/출력')}</button>`,
+    after:()=>['pc','pq'].forEach(id=>$('#'+id).addEventListener('change',()=>{S._pf={c:+pc.value||1,q:+pq.value||0};drawModal()}))}}
+function doPrint(){const c=+$('#pc').value||0,q=+$('#pq').value||0;if(c<1||q<1)return toast(t('이동대차수와 수량을 입력해주세요.'),'warning');
+  for(let i=0;i<c;i++)S.mc.outs.push({cart:1,prints:1,qty:q,lot:nextLot()});S._pf=null;closeModal();render();toast(t('LOT 식별표 {n}장이 출력되었습니다.',{n:c}),'success')}
+function mPrintDetail(){const o=S.mc.order,M=S.mc;
+  return {title:t('바코드 출력 상세'),sub:t('합계 수량 {n} EA',{n:fmt(M.outs.reduce((a,x)=>a+x.qty,0))}),body:table('pdG',['작업지시번호','제품코드','제품명','이동대차수','바코드 출력 장수','수량','Lot No.'],M.outs.map(x=>[`<span class="mono">${o.no}</span>`,o.item,t(item(o.item).nm),x.cart,x.prints,fmt(x.qty),`<span class="mono">${x.lot}</span>`]),{empty:'발행한 바코드가 없습니다.',sel:M.outs.indexOf(S._pd),align:['','','','r','r','r','']}),
+    foot:`<button class="btn" onclick="closeModal()">${t('취소')}</button><button class="btn primary" onclick="rePrint()">${t('재발행')}</button>`,after:()=>bindRows('pdG',i=>S._pd=M.outs[i])}}
+function rePrint(){const x=S._pd;if(!x||!S.mc.outs.includes(x))return toast(t('재발행할 항목을 선택해주세요.'),'warning');x.prints++;drawModal();render();toast(t('{l} 식별표를 재발행했습니다.',{l:x.lot}),'success')}
+
+/* 문서 보기 */
+function mDoc(kind){const isAs=S.page.startsWith('as');const o=isAs?S.as.order:S.mc.order;const cd=o?o.item:'HG-30120';const nm=isAs?t(asProd(cd).nm):t(item(cd).nm);
+  if(S._docKind!==kind){S._docKind=kind;S._docPg=1}const pg=S._docPg||1;
+  return {title:t(kind),sub:`${cd} ${nm}`,width:1240,body:`
+    <div class="docgrid">
+      <div><div class="pdf" id="pdfView"><div class="pg"><h4>${t(kind)}</h4><div style="text-align:center;color:#888;margin-bottom:10px">${cd} · Rev.03 · ${pg} / 3</div>
+        <div class="ln"></div><div class="ln" style="width:80%"></div><div class="bx">${kind==='도면'?t('도면 이미지 영역'):t('작업 순서 · 사진 영역')}</div><div class="ln"></div><div class="ln" style="width:60%"></div><div class="ln" style="width:90%"></div></div></div>
+        <div style="display:flex;justify-content:center;gap:8px;margin-top:10px"><button class="btn" ${pg<=1?'disabled':''} onclick="S._docPg=${pg-1};drawModal()">${t('이전')}</button><span class="muted" style="align-self:center">${pg} / 3</span><button class="btn" id="docNext" ${pg>=3?'disabled':''} onclick="S._docPg=${pg+1};drawModal()">${t('다음')}</button><button class="btn" onclick="fullDoc()">${t('전체화면')}</button></div></div>
+      <div class="stack"><div><div class="sub-h">${t('문서 개정 목록')}</div>${table('revG',['No','공정','공정명','일자','개정번호','비고'],[[1,'OP10',t('선삭'),D2,'Rev.03',t('치수 공차 변경')],[2,'OP10',t('선삭'),'2025-11-04','Rev.02',t('검사 주기 변경')],[3,'OP10',t('선삭'),'2025-03-17','Rev.01',t('최초 제정')]],{click:false})}</div>
+        <div class="fld">${t('개정 검토 요청 내용')}<textarea class="input" id="revTx" style="height:110px" placeholder="${t('현장에서 확인한 개정 필요 사항을 입력하세요.')}"></textarea></div>
+        <button class="btn primary" id="revBtn" onclick="if(!revTx.value.trim())return toast(t('요청 내용을 입력해주세요.'),'warning');revTx.value='';toast(t('개정 검토 요청을 보냈습니다.'),'success')">${t('개정 검토 요청')}</button></div></div>`}}
+function fullDoc(){const el=$('#pdfView');if(el&&el.requestFullscreen)el.requestFullscreen().catch(()=>toast(t('전체화면을 열 수 없습니다.'),'warning'));else toast(t('전체화면을 열 수 없습니다.'),'warning')}
+
+/* 체크시트 (가공) */
+const CHK_TIMES=['초품','08시','10시','13시','15시','17시','종품'];
+const CHK_ITEMS=[['외경 Ø62','62.00 ±0.02','측정',61.98,62.02],['내경 Ø45 H7','45.000~45.025','측정',45,45.025],['전장','118.0 ±0.1','측정',117.9,118.1],['표면 거칠기','Ra 1.6 이하','육안'],['버(Burr) 유무','없을 것','육안']];
+const outRange=(it,x)=>x!==''&&x!=null&&it[2]==='측정'&&(+x<it[3]||+x>it[4]);
+function mCheck(){const L=S.mc.line,v=S.edits['chk_'+S.mc.order.no]||(S.edits['chk_'+S.mc.order.no]={});
+  return {title:t('체크시트'),sub:t('자주검사 · 4M 변경 기록'),width:1400,body:`
+    ${table('ckG',['장비번호','공정번호','항목','한계값','측정구분',...CHK_TIMES],CHK_ITEMS.map((it,r)=>[L.eq,S.mc.order.proc.split(' ')[0],t(it[0]),t(it[1]),t(it[2]),...CHK_TIMES.map((x,c)=>{const k=r+'_'+c,val=v[k]??'';return it[2]==='육안'?`<select data-k="${k}"><option></option><option ${val==='OK'?'selected':''}>OK</option><option ${val==='NG'?'selected':''}>NG</option></select>`:`<input data-k="${k}" value="${val}" inputmode="decimal" style="${outRange(it,val)?'border-color:var(--crit);color:var(--crit)':''}">`})]),{click:false})}
+    <div class="formgrid"><div class="fld">${t('4M 변경 (작업자 · 설비 · 자재 · 방법)')}<select class="input" id="m4">${['변경 없음','작업자 변경','설비 수리 후 재가동','자재 LOT 변경','작업방법 변경'].map(x=>`<option ${v.m4===x?'selected':''} value="${x}">${t(x)}</option>`).join('')}</select></div><div class="fld" style="grid-column:span 2">${t('비고')}<input class="input" id="ckNote" value="${esc(v.note||'')}" placeholder="${t('특이사항')}"></div></div>
+    <p class="note">${t('측정값이 한계값을 벗어나면 빨간색으로 표시됩니다.')}</p>`,
+    foot:`<button class="btn" onclick="closeModal()">${t('취소')}</button><button class="btn primary" id="ckOk" onclick="saveCheck()">${t('저장')}</button>`,
+    after:()=>document.querySelectorAll('#ckG [data-k]').forEach(el=>el.addEventListener('change',()=>{v[el.dataset.k]=el.value;const it=CHK_ITEMS[el.dataset.k.split('_')[0]];if(el.tagName==='INPUT'){const bad=outRange(it,el.value);el.style.borderColor=bad?'var(--crit)':'';el.style.color=bad?'var(--crit)':''}}))}}
+function saveCheck(){const v=S.edits['chk_'+S.mc.order.no];v.m4=$('#m4').value;v.note=$('#ckNote').value;if(!Object.keys(v).some(k=>k.includes('_')&&v[k]))return toast(t('검사 결과를 하나 이상 입력해주세요.'),'warning');
+  const ng=Object.entries(v).some(([k,x])=>k.includes('_')&&(x==='NG'||outRange(CHK_ITEMS[k.split('_')[0]],x)));
+  S.mc.chk=true;closeModal();render();toast(ng?t('체크시트가 저장되었습니다. 한계값을 벗어난 항목이 있습니다.'):t('체크시트가 저장되었습니다.'),ng?'warning':'success')}
+
+/* 설비고장 접수 (가공 · 조립 · 열처리 공통) */
+function eqsFor(k){return k==='ht'?[['EQ-4101','연속 침탄로 #1'],['EQ-4102','템퍼링로 #1'],['EQ-4201','고주파 열처리기 #1']]:k==='as'?[['EQ-2301','너트런너 #1'],['EQ-2401','누유 시험기 #1'],['EQ-2201','압입 프레스 #1']]:[[S.mc.line.eq,S.mc.line.eqn],['EQ-'+S.mc.line.cd.slice(3)+'2','로더 #1']]}
+function mBreak(k){const done=S._bkDone;
+  return {title:t('설비고장 접수'),width:980,body:`
+    <div class="formgrid"><div class="fld">${t('설비')} *<select class="input" id="bkEq" ${done?'disabled':''}>${eqsFor(k).map(e=>`<option value="${e[0]}|${e[1]}">${e[0]} / ${t(e[1])}</option>`).join('')}</select></div>
+    <div class="fld">${t('고장코드')} *<select class="input" id="bkCd" ${done?'disabled':''}>${BRK_CODES.map(c=>`<option value="${c[0]}">${c[0]} ${t(c[1])}</option>`).join('')}</select></div>
+    <div class="fld">${t('접수자')}<input class="input" value="${t('작업자A')}" disabled></div>
+    <div class="fld" style="grid-column:1/-1">${t('고장 내용')}<input class="input" id="bkTx" ${done?'disabled':''} value="${esc(t('주축 회전 시 이상 소음 발생'))}"></div></div>
+    <p class="note">${t('접수하면 작업 상태가 설비고장으로 바뀌고 접수번호와 QR코드가 표시됩니다. 휴대폰으로 QR코드를 스캔해 고장 부위 사진을 첨부할 수 있습니다.')}</p>
+    ${done?`<div class="panel" style="display:flex;gap:20px;align-items:center;box-shadow:none;background:var(--surface2);flex-wrap:wrap">${qrHtml(done.no)}<div style="line-height:1.8"><span class="pill p-crit">${t('접수')}</span><div style="font-size:18px;font-weight:800" class="mono">${done.no}</div><div>${done.eq} / ${t(done.eqn)}</div><div>${done.cd} ${t(brkName(done.cd))}</div>
+      <div class="small muted">${t('휴대폰으로 QR을 스캔하면 사진 등록 화면이 열립니다.')}</div><button class="btn" id="toMobile" style="margin-top:8px" onclick="S.brkSel=S.brks.indexOf(S._bkDone);S._bkDone=null;go('mobile')">${ic('phone')}${t('모바일 화면 열기')}</button></div></div>`:''}`,
+    foot:done?`<button class="btn primary" onclick="S._bkDone=null;closeModal()">${t('닫기')}</button>`:`<button class="btn" onclick="closeModal()">${t('닫기')}</button><button class="btn primary" id="bkOk" style="background:var(--crit);border-color:var(--crit);color:#fff" onclick="doBreak('${k}')">${ic('alert')}${t('설비고장접수')}</button>`}}
+function doBreak(k){const [eq,eqn]=$('#bkEq').value.split('|');const cd=$('#bkCd').value;
+  const no=`BD${YMD}-${String(40+S.brks.length).padStart(3,'0')}`;
+  const ord=k==='mc'?S.mc.order:k==='as'?S.as.order:null;
+  const b={no,menu:{mc:'가공',as:'조립',ht:'열처리'}[k],order:ord?ord.no:'',eq,eqn,cd,tx:$('#bkTx').value,time:nowStr().slice(0,16),end:'',photo:false,sent:false,state:'접수'};
+  S.brks.unshift(b);S._bkDone=b;
+  if(k==='mc'){S.mc.status='brk';S.mc.hold=null;S.mc.order.status='설비고장'}else if(k==='as'){S.as.status='brk';S.as.order.status='설비고장'}
+  S.alarms.unshift({id:Date.now(),cat:'설비보전',text:'{eq} 설비고장이 접수되었습니다. (접수번호 {no})',vars:{eq,eqn,no},time:nowStr().slice(0,16),read:false});
+  render();drawModal();toast(t('설비고장이 접수되었습니다.'),'success')}
+function qrHtml(seedStr){let s=0;for(const c of seedStr)s=(s*31+c.charCodeAt(0))%9973;let h='';
+  for(let y=0;y<21;y++)for(let x=0;x<21;x++){const fx=x<7?x:x>13?x-14:-1,fy=y<7?y:y>13?y-14:-1;let on;
+    if(fx>=0&&fy>=0&&!(x>13&&y>13))on=fx===0||fx===6||fy===0||fy===6||(fx>1&&fx<5&&fy>1&&fy<5);else on=((x*7+y*13+s+x*y*3)%5)<2;
+    h+=`<i class="${on?'':'w'}"></i>`}return `<div class="qr">${h}</div>`}
+
+/* 부품요청 */
+const PART_REQ=[['WR-7001','용접 와이어 Ø1.2','KS D 7025',1],['TP-7105','용접 팁 M6','DWG-7105-R0',2],['NZ-7210','노즐 Ø16','DWG-7210-R1',1],['BT-3010','육각볼트 M8×25','KS B 1002',6]];
+function mPartReq(){return {title:t('부품요청'),sub:t('BOP 기준 부품'),width:900,body:`${table('prq',['부품코드','부품명','도면번호','BOP수량','요청수량'],PART_REQ.map((r,i)=>[r[0],t(r[1]),r[2],r[3],`<input type="number" min="0" data-i="${i}" placeholder="0" style="width:90px">`]),{click:false,align:['','','','r','']})}
+  <div class="fld">${t('요청 메모')}<input class="input" id="prMemo" placeholder="${t('예: 오후 2시 전까지 라인으로 보내 주세요.')}"></div>`,
+  foot:`<button class="btn" onclick="closeModal()">${t('취소')}</button><button class="btn primary" id="prOk" onclick="doPartReq()">${t('요청')}</button>`}}
+function doPartReq(){const n=[...document.querySelectorAll('#prq input')].filter(i=>+i.value>0).length;if(!n)return toast(t('요청수량을 하나 이상 입력해주세요.'),'warning');closeModal();toast(t('부품 {n}건을 요청했습니다.',{n}),'success')}
+
+/* 작업종료 */
+function mFinish(){const M=S.mc,o=M.order;return {title:t('작업완료처리'),width:1300,body:`
+  ${table('finG',['작업지시번호','공정','작업자','제품번호/제품명','설비명','작업시작일자','작업(근무) 구분','지시수량','생산수량'],[[`<span class="mono">${o.no}</span>`,t(o.proc),t(o.worker),`${o.item} / ${t(item(o.item).nm)}`,t(M.line.eqn),o.start,t(shiftNow()),fmt(o.qty),fmt(M.cum)]],{click:false})}
+  ${M.lots.length?`<label class="note warn" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="remChk" checked> ${t('투입한 소재 LOT({l})의 잔량을 함께 처리합니다.',{l:M.lots.map(l=>l.lot).join(', ')})}</label>`:''}
+  ${M.cum<o.qty?`<p class="note warn">${t('생산수량({a})이 지시수량({b})보다 적습니다. 그래도 작업을 종료할까요?',{a:fmt(M.cum),b:fmt(o.qty)})}</p>`:`<p class="note">${t('지시수량을 모두 생산했습니다.')}</p>`}
+  ${!M.chk?`<p class="note warn">${t('체크시트가 아직 작성되지 않았습니다.')}</p>`:''}`,
+  foot:`<button class="btn" onclick="closeModal()">${t('취소')}</button><button class="btn primary" id="finOk" onclick="doFinish()">${t('확인')}</button>`}}
+function doFinish(){const M=S.mc;M.order.status='완료';M.order.prod=M.cum;M.status='done';M.hold=null;closeModal();render();toast(t('작업이 완료 처리되었습니다.'),'success')}
+
+/* ============================ 작업정보 (가공 · 조립 공통) ============================ */
+function wiSource(k){if(k==='mc'){const L=S.mc.line;return L?ORDERS.filter(o=>o.line===L.cd):[]}return AS_ORDERS}
+function wiRows(k){const w=S.wi[k];return wiSource(k).filter(o=>{const d=o.start.slice(0,10);return (!w.q||o.no.toUpperCase().includes(w.q.toUpperCase()))&&(!w.from||d>=w.from)&&(!w.to||d<=w.to)})}
+function hashOf(s){let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))%997;return h}
+const produced=(k,o)=>k==='mc'?o.prod:o.done;
+function brkRows(k,o){const w=S.wi[k];return S.brks.filter(b=>b.order===o.no).filter(b=>!w.brk||b.cd===w.brk)}
+function detailRows(k,o,tab){const h=hashOf(o.no),day=o.start.slice(0,10),ed=S.edits,p=produced(k,o);
+  if(tab==='생산/불량관리'){if(!p)return [];const n=k==='mc'?Math.max(1,Math.min(4,Math.ceil(p/70))):p;
+    return Array.from({length:n},(_,i)=>{const q=k==='as'?1:[78,80,76,74][i];const b=k==='mc'&&(h+i)%3===0?1:0;return [i+1,`${day} ${pad(8+i)}:10`,t('{n}분',{n:60}),q,q-b,b,b?t(BAD_TYPES[(h+i)%BAD_TYPES.length]):'']})}
+  if(tab==='비가동관리'){if(!p)return [];const key='stop_'+o.no;
+    return [[1,0,`${day} 10:40`,`${day} 10:58`,18],[2,1,`${day} 13:00`,`${day} 13:25`,25],[3,(h%3)+3,`${day} 15:10`,`${day} 15:22`,12]].map((r,i)=>{const sel=(ed[key]||{})[i]??STOP_CODES[r[1]][0];
+      return [r[0],`<select data-ek="${key}" data-i="${i}">${STOP_CODES.map(c=>`<option value="${c[0]}" ${c[0]===sel?'selected':''}>${c[0]}</option>`).join('')}</select>`,t(STOP_CODES.find(c=>c[0]===sel)[1]),r[2],r[3],r[4]]})}
+  if(tab==='생산실적'){if(!p)return [];const key='perf_'+o.no;
+    if(k==='mc'){const base=[[78,1],[80,0],[76,2],[74,0]],n=Math.max(1,Math.min(4,Math.ceil(p/70)));
+      return base.slice(0,n).map((r,i)=>{const e=(ed[key]||{})[i]||{p:r[0],b:r[1]};return [i+1,`${pad(8+i)}:00`,`${pad(9+i)}:00`,`<input type="number" data-ek="${key}" data-i="${i}" data-f="p" value="${e.p}" style="width:90px">`,`<input type="number" data-ek="${key}" data-i="${i}" data-f="b" value="${e.b}" style="width:70px">`]})}
+    const sent=ed['sent_'+o.no]||{};
+    return Array.from({length:p},(_,i)=>{const fail=i===p-1&&!sent[i];return [i+1,`${pad(8+i)}:00`,`${pad(9+i)}:00`,1,0,i===0?t('자재대기'):'',i===0?6:'',i===1?t('설비점검'):'',i===1?12:'','','','','',fail?`<button class="btn danger" style="padding:3px 9px" onclick="resend('${o.no}',${i})">${t('재전송')}</button>`:`<span class="pill p-ok">${t('전송 완료')}</span>`]})}
+  if(tab==='생산실적/비가동'){if(!p)return [];return [[1,'',t('생산'),'08:10','10:40','',198,3],[2,'NS-01',t('소재대기'),'10:40','10:58',18,'',''],[3,'',t('생산'),'10:58','13:00','',160,1],[4,'NS-02',t('작업준비'),'13:00','13:25',25,'','']]}
+  return []}
+function resend(no,i){(S.edits['sent_'+no]||(S.edits['sent_'+no]={}))[i]=true;render();toast(t('ERP로 재전송했습니다.'),'success')}
+function workInfo(k){const w=S.wi[k];const isMc=k==='mc';
+  const tabs=isMc?['설비고장관리','생산/불량관리','비가동관리','생산실적','생산실적/비가동']:['설비고장관리','생산/불량관리','비가동관리','생산실적'];
+  if(!tabs.includes(w.tab))w.tab=tabs[0];
+  const ready=isMc?S.mc.line:S.as.proc;
+  const head=`<div class="head"><div><h1>${t(isMc?'POP 가공':'POP 조립')} · ${t('작업정보')}</h1><p class="lede">${ready?`${ready.cd} / ${t(ready.nm)} · `:''}${t('기간별 작업지시를 조회하고 설비고장 · 불량 · 비가동 · 생산실적을 확인합니다.')}</p></div>
+    <div class="acts"><span class="clock">${nowStr()}</span><button class="btn primary lg" onclick="openModal(${isMc?'mLine':'mProc'})">${ic('link')}${t(isMc?'라인선택':'공정선택')}</button></div></div>`;
+  if(!ready)return head+`<div class="emptybox"><b>${t(isMc?'라인을 선택해주세요.':'공정을 선택해주세요.')}</b>${t('라인(공정)을 고르면 해당 작업지시 목록이 조회됩니다.')}<div style="margin-top:14px"><button class="btn primary" id="wiPick" onclick="openModal(${isMc?'mLine':'mProc'})">${t(isMc?'라인선택':'공정선택')}</button></div></div>`;
+  const rows=wiRows(k);if(w.sel!=null&&w.sel>=rows.length)w.sel=null;
+  const o=w.sel!=null?rows[w.sel]:null;
+  const top=rows.map(o=>isMc?[`<span class="mono">${o.no}</span>`,'-',o.item,t(item(o.item).nm),t(o.proc),t(o.worker),o.start,fmt(o.qty),fmt(o.prod),pill(o.status)]
+    :[`<span class="mono">${o.no}</span>`,`<span class="mono">${o.ki[0]}${o.ki.length>1?' ~ '+o.ki[o.ki.length-1].slice(-4):''}</span>`,o.item,t(asProd(o.item).nm),t(S.as.proc.nm),t(o.worker),o.start,fmt(o.qty),fmt(o.done),pill(o.status)]);
+  let cols,drows=[],dt=w.tab;
+  if(dt==='설비고장관리'){cols=['No','설비코드','설비명','고장코드','고장요인','고장시작','고장종료','경과시간','처리현황','상세보기'];
+    if(o)drows=brkRows(k,o).map((b,i)=>{const el=b.end?Math.round((new Date(b.end.replace(' ','T'))-new Date(b.time.replace(' ','T')))/6e4):'';return [i+1,b.eq,t(b.eqn),b.cd,t(brkName(b.cd)),b.time,b.end||'-',el!==''?t('{n}분',{n:el}):t('진행 중'),pill(b.state),`<button class="btn" style="padding:3px 10px" onclick="openModal(mBrkDetail,'${b.no}','${k}','${o.no}')">${t('상세')}</button>`]})}
+  else if(dt==='생산/불량관리'){cols=['No','작업시작시간','작업시간','생산수량','양품수량','불량수량','불량유형'];if(o)drows=detailRows(k,o,dt)}
+  else if(dt==='비가동관리'){cols=['No','비가동코드','비가동명칭','비가동시작','비가동종료','경과분'];if(o)drows=detailRows(k,o,dt)}
+  else if(dt==='생산실적'){cols=isMc?['No','작업시작시간','작업종료시간','생산수량','불량수량']:['No','작업시작시간','작업종료시간','생산수량','불량수량','무가동1','무가동1시간','무가동2','무가동2시간','무가동3','무가동3시간','무가동4','무가동4시간','재전송'];if(o)drows=detailRows(k,o,dt)}
+  else{cols=['No','비가동코드','비가동명칭','시작시간','종료시간','경과분','생산수량','불량수량'];if(o)drows=detailRows(k,o,dt)}
+  const canSave=dt==='비가동관리'||(dt==='생산실적'&&isMc);
+  AFTER.push(()=>{bindRows('wiTop',i=>{w.sel=i;render()});
+    document.querySelectorAll('[data-ek]').forEach(el=>el.addEventListener('change',()=>{const key=el.dataset.ek,i=+el.dataset.i;const m=S.edits[key]||(S.edits[key]={});
+      if(el.dataset.f){const ins=el.closest('tr').querySelectorAll('input');m[i]={p:+ins[0].value,b:+ins[1].value}}else{m[i]=el.value;render()}}));
+    const e=$('#wq');e&&e.addEventListener('keydown',ev=>{if(ev.key==='Enter')wiSearch(k)})});
+  return head+`<section class="panel">
+    <div class="tabs" role="tablist">${tabs.map(x=>`<button role="tab" aria-selected="${w.tab===x}" onclick="S.wi.${k}.tab='${x}';render()">${t(x)}</button>`).join('')}</div>
+    <div class="toolbar"><div class="fld">${t('시작일')}<input class="input" type="date" id="wf" value="${w.from}"></div><div class="fld">${t('종료일')}<input class="input" type="date" id="wt" value="${w.to}"></div>
+      <div class="fld">${t('작업지시번호')}<input class="input" id="wq" value="${esc(w.q)}" placeholder="${isMc?'WO':'WA'}…"></div>
+      ${dt==='설비고장관리'?`<div class="fld">${t('고장명칭')}<select class="input" id="wb"><option value="">${t('전체')}</option>${BRK_CODES.map(c=>`<option value="${c[0]}" ${w.brk===c[0]?'selected':''}>${t(c[1])}</option>`).join('')}</select></div>`:''}
+      <button class="btn primary" id="wiSearchBtn" onclick="wiSearch('${k}')">${t('검색')}</button><button class="btn" onclick="Object.assign(S.wi.${k},{q:'',from:D3,to:D0,brk:'',sel:null});render()">${t('초기화')}</button>
+      ${canSave?`<button class="btn primary" id="wiSave" style="margin-left:auto" ${o?'':'disabled'} onclick="wiSave()">${t('저장/전송')}</button>`:''}</div>
+    <div class="sub-h">${t('작업지시목록')}<small>${t('전체 : {n} 건',{n:rows.length})}</small></div>
+    ${table('wiTop',['작업지시번호','기대번호','제품번호','제품명','공정','작업자','시작일자','지시수량','생산수량','진행상태'],top,{sel:w.sel,empty:'조건에 맞는 작업지시가 없습니다.',align:['','','','','','','','r','r','']})}
+    <div class="sub-h" style="margin-top:16px">${t({'설비고장관리':'설비고장내역','생산/불량관리':'불량내역','비가동관리':'비가동내역'}[dt]||dt)}<small>${o?`<span class="mono">${o.no}</span>`:''}</small></div>
+    ${table('wiDown',cols,drows,{click:false,empty:o?'내역이 없습니다.':'위 목록에서 작업지시를 선택하세요.'})}
+  </section>`}
+function wiSearch(k){const w=S.wi[k];w.from=$('#wf').value;w.to=$('#wt').value;w.q=$('#wq').value.trim();const b=$('#wb');if(b)w.brk=b.value;w.sel=null;render();toast(t('{n}건이 조회되었습니다.',{n:wiRows(k).length}),'info')}
+function wiSave(){toast(t('저장 후 ERP로 전송했습니다.'),'success')}
+function mBrkDetail(no,k,ono){const o=(k==='mc'?ORDERS:AS_ORDERS).find(x=>x.no===ono);const b=S.brks.find(x=>x.no===no);
+  const nm=k==='mc'?t(item(o.item).nm):t(asProd(o.item).nm);
+  return {title:t('설비고장 요인 상세'),width:820,body:`<dl class="kv"><dt>${t('접수번호')}</dt><dd class="mono">${b.no}</dd><dt>${t('작업지시번호')}</dt><dd class="mono">${o.no}</dd>
+    <dt>${t('공정')}</dt><dd>${k==='mc'?t(o.proc):t(S.as.proc.nm)}</dd><dt>${t('제품명')}</dt><dd>${nm}</dd><dt>${t('설비')}</dt><dd>${b.eq} / ${t(b.eqn)}</dd><dt>${t('고장코드')}</dt><dd>${b.cd} ${t(brkName(b.cd))}</dd>
+    <dt>${t('처리현황')}</dt><dd>${pill(b.state)}</dd><dt>${t('고장시작')}</dt><dd>${b.time}</dd></dl>
+    <div class="fld">${t('고장 내용')}<div class="input">${esc(t(b.tx))}</div></div>
+    <div class="fld">${t('첨부파일')}<div class="input">${b.sent?'📷 breakdown_photo_01.jpg · '+t('모바일 등록'):t('첨부된 사진이 없습니다.')}</div></div>`,
+    foot:`${!b.sent?`<button class="btn" onclick="S.brkSel=S.brks.indexOf(S.brks.find(x=>x.no==='${b.no}'));go('mobile')">${ic('phone')}${t('사진 등록하기')}</button>`:''}<button class="btn primary" onclick="closeModal()">${t('확인')}</button>`}}
+
+/* ============================ POP 조립 ============================ */
+function mProc(){const f=S._pf2||(S._pf2={plant:'제1공장',line:'조립 1라인',q:'',nm:''});
+  let rows=AS_PROCS;if(f.q||f.nm){const hit=AS_ORDERS.filter(o=>(!f.q||o.no.toUpperCase().includes(f.q.toUpperCase()))&&(!f.nm||t(asProd(o.item).nm).toUpperCase().includes(f.nm.toUpperCase())));rows=hit.length?AS_PROCS:[]}
+  return {title:t('공정변경'),sub:t('조립 공정 선택'),width:960,body:`
+    <div class="toolbar"><div class="fld">${t('공장')}<select class="input" id="pp">${['제1공장','제2공장'].map(x=>`<option value="${x}" ${f.plant===x?'selected':''}>${t(x)}</option>`).join('')}</select></div>
+      <div class="fld">${t('라인')}<select class="input" id="pl">${['조립 1라인','조립 2라인'].map(x=>`<option value="${x}" ${f.line===x?'selected':''}>${t(x)}</option>`).join('')}</select></div>
+      <div class="fld">${t('작업지시 번호')}<input class="input" id="pq2" value="${esc(f.q)}"></div><div class="fld">${t('품목명')}<input class="input" id="pn" value="${esc(f.nm)}"></div>
+      <button class="btn primary" onclick="S._pf2={plant:pp.value,line:pl.value,q:pq2.value,nm:pn.value};drawModal()">${t('검색')}</button><button class="btn" onclick="S._pf2=null;drawModal()">${t('초기화')}</button></div>
+    ${table('procG',['No','공정코드','공정명'],rows.map((p,i)=>[i+1,p.cd,t(p.nm)]),{sel:rows.indexOf(S._psel),empty:'조건에 맞는 공정이 없습니다.'})}`,
+    foot:`<button class="btn" onclick="closeModal()">${t('닫기')}</button><button class="btn primary" id="procOk" onclick="pickProc()">${t('변경')}</button>`,after:()=>bindRows('procG',i=>S._psel=rows[i])}}
+function pickProc(){if(!S._psel)return toast(t('하나의 항목을 선택해주세요.'),'warning');const A=S.as;if(A.order&&A.order.status==='작업 중')A.order.status='작업대기';
+  Object.assign(A,{proc:S._psel,order:null,status:'none',sel:0,chk:false});S.wi.as.sel=null;closeModal();render();toast(t('{p} 공정으로 변경되었습니다.',{p:`${A.proc.cd} / ${t(A.proc.nm)}`}),'success')}
+function asPerf(){const A=S.as,o=A.order,P=A.proc;const p=o?asProd(o.item):null;const rate=o?pct(o.done,o.qty):0;
+  const idx=P?AS_PROCS.indexOf(P):-1;const prev=idx>0?t(AS_PROCS[idx-1].nm):t('부품 투입'),next=P&&idx<AS_PROCS.length-1?t(AS_PROCS[idx+1].nm):t('출하 검사');
+  const kv=(k,v)=>`<dt>${t(k)}</dt><dd>${v||'<span class="muted">-</span>'}</dd>`;
+  AFTER.push(()=>document.querySelectorAll('.ki[data-i]').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;if(A.status==='done')return;if(i<o.done)return toast(t('이미 완료된 기대번호입니다.'),'warning');A.sel=i;render()}));
+  return `<div class="head"><div><h1>${t('POP 조립')} · ${t('실적정보')}</h1><p class="lede">${P?`${P.cd} / ${t(P.nm)} · ${t('조립 1라인')}`:t('먼저 [공정선택]으로 이 단말이 담당할 조립 공정을 고르세요.')}</p></div>
+    <div class="acts"><span class="clock">${nowStr()}</span><button class="btn primary lg" id="btnProc" onclick="openModal(mProc)">${ic('link')}${t('공정선택')}</button></div></div>
+  <div class="grid g4" style="margin-bottom:14px">
+    <div class="panel kpi"><span class="kl">${t('작업지시 진행율')}</span><span class="kv num">${rate}%</span><div class="bar"><i style="width:${rate}%"></i></div><span class="kd">${o?`${o.done} / ${o.qty} ${t('대')}`:'-'}</span></div>
+    <div class="panel kpi"><span class="kl">${t('작업 상태')}</span>${stateBox(A.status,P?t('작업현황 - {p}',{p:t(P.nm)}):'')}</div>
+    <div class="panel kpi"><span class="kl">${t('선공정 → 후공정')}</span><span class="kv" style="font-size:17px">${P?`${prev} → ${next}`:'-'}</span><span class="kd">${t('현재')}: ${P?t(P.nm):'-'}</span></div>
+    <div class="panel kpi"><span class="kl">${t('기대번호')}</span><span class="kv mono" style="font-size:22px;color:var(--accent)">${o?o.ki[A.sel]:'-'}</span><span class="kd">${o?`${o.no} · ${t(p.nm)}`:'-'}</span></div>
+  </div>
+  <div class="pop">
+    <div class="stack">
+      <section class="panel"><header><h2>${t('작업지시 정보')}</h2></header><dl class="kv">${kv('작업지시번호',o?`<span class="mono">${o.no}</span>`:'')}${kv('기대번호',o?`<span class="mono">${o.ki[A.sel]}</span>`:'')}${kv('제품번호 / 제품명',o?`${o.item} / ${t(p.nm)}`:'')}${kv('공정',P?t(P.nm):'')}${kv('작업자',o?`${t(o.worker)} / ${t('조립1팀')}`:'')}${kv('설비',o?`EQ-2301 / ${t('너트런너 #1')}`:'')}${kv('작업시작일자',o?o.start:'')}${kv('지시수량',o?`${o.qty} ${t('대')}`:'')}</dl></section>
+      <section class="panel"><header><h2>${t('조립 문서')}</h2></header><div class="docs">
+        <button class="doc" ${o?'':'disabled'} onclick="openModal(mDoc,'작업표준서')">${t('작업표준서')}<small>Rev.03</small></button>
+        <button class="doc" ${o?'':'disabled'} onclick="openModal(mDoc,'Q-Point')">Q-Point<small>${t('중점 관리 항목')}</small></button>
+        <button class="doc" id="btnOpt" ${o?'':'disabled'} onclick="openModal(mOpt)">${t('조립옵션')}<small>${t('기대번호별 사양')}</small></button>
+        <button class="doc" id="btnAsCheck" ${o?'':'disabled'} onclick="openModal(mAsCheck)">${t('체크시트')}<small class="${o&&!A.chk?'req':''}">${o?(A.chk?t('작성 완료'):t('미작성')):'-'}</small></button></div></section>
+    </div>
+    <section class="panel">
+      <div class="sub-h">${t('기대번호 선택')}<button class="btn" id="btnKiScan" ${o&&A.status!=='done'?'':'disabled'} onclick="openModal(mScan,'ki')">${ic('scan')}${t('바코드R')}</button></div>
+      ${o?`<div class="kis">${o.ki.map((k2,i)=>`<button class="ki ${A.sel===i&&A.status!=='done'?'sel':''} ${i<o.done?'done':''}" data-i="${i}">${k2}<small>${i<o.done?t('완료'):A.sel===i?t('작업 대상'):t('대기')}</small></button>`).join('')}</div>`:`<div class="emptybox">${t('작업지시를 시작하면 기대번호가 표시됩니다.')}</div>`}
+      <div class="sub-h">${t('부품 (BOM)')}<small>${t('전체 : {n} 건',{n:o?AS_BOM[o.item].length:0})}</small></div>
+      ${table('asBom',['부품코드','부품명','도면번호','BOM수량'],o?AS_BOM[o.item].map(b=>[b[0],t(b[1]),b[2],b[3]]):[],{click:false,align:['','','','r']})}
+    </section>
+    <div class="acts-col">
+      <button class="abtn" id="asStatusBtn" onclick="openModal(mAsStatus)">${ic('list')}${t('작업현황')}</button>
+      <button class="abtn" id="asOrderBtn" onclick="openAsOrder()">${ic('play')}${t('작업지시')}</button>
+      <button class="abtn crit" id="asBreakBtn" onclick="needWork('as',()=>openModal(mBreak,'as'))">${ic('alert')}${t('설비고장')}</button>
+      <button class="abtn" id="asPartBtn" onclick="needWork('as',()=>openModal(mPartReq))">${ic('pkg')}${t('부품요청')}</button>
+      <button class="abtn" id="asNaBtn" onclick="needWork('as',()=>openModal(mNoAttach))">${ic('box')}${t('미부착')}</button>
+      ${A.status==='brk'||A.status==='wait'?`<button class="abtn go" id="asRestart" onclick="asRestart()">${ic('play')}${t('작업재시작')}</button>`:''}
+      <button class="abtn end" id="asFinishBtn" onclick="needWork('as',()=>openModal(mAsFinish),true)">${ic('flag')}${t('공정종료')}</button>
+    </div>
+  </div>
+  <section class="panel" style="margin-top:14px"><header><h2>${t('작업 집계')}</h2></header>
+    ${table('asSum',['계획수량','작업중인수량','양품수량','부품불량수량','총생산수량','총근무시간(분)','가동시간(분)','비가동시간(분)','달성율(%)'],o?[[o.qty,A.status==='run'?1:0,o.done,0,o.done,480,470,10,rate]]:[],{click:false,empty:'작업을 시작하면 집계가 표시됩니다.',align:Array(9).fill('r')})}</section>`}
+function asRestart(){const A=S.as;A.status='run';A.order.status='작업 중';const b=S.brks.find(b=>b.order===A.order.no&&b.state!=='완료');if(b){b.state='완료';b.end=nowStr().slice(0,16)}render();toast(t('작업이 재시작되었습니다.'),'success')}
+function openAsOrder(){if(!S.as.proc)return toast(t('공정을 선택해주세요.'),'warning');S._ao=null;openModal(mAsOrder)}
+function mAsOrder(){const rows=AS_ORDERS.filter(o=>o.status==='대기');return {title:t('작업지시'),sub:`${t(S.as.proc.nm)} · ${t('조회 건수 {n}건',{n:rows.length})}`,width:1200,
+  body:table('asoG',['작업지시번호','품번','기대번호','제품명','작업지시자','시작일자','지시수량','진행상태'],rows.map(o=>[`<span class="mono">${o.no}</span>`,o.item,`<span class="mono">${o.ki[0]} ~ ${o.ki[o.ki.length-1].slice(-4)}</span>`,t(asProd(o.item).nm),t(o.worker),o.start,o.qty,pill(o.status)]),{empty:'내려온 작업지시가 없습니다.',sel:rows.indexOf(S._ao)}),
+  foot:`<button class="btn" onclick="closeModal()">${t('닫기')}</button><button class="btn primary" id="asStart" ${S._ao?'':'disabled'} onclick="asStart()">${ic('play')}${t('작업시작')}</button>`,after:()=>bindRows('asoG',i=>{S._ao=rows[i];$('#asStart').disabled=false})}}
+function asStart(){const A=S.as,o=S._ao;if(!o)return;if(A.order&&A.order!==o&&A.order.status==='작업 중')A.order.status='작업대기';o.status='작업 중';Object.assign(A,{order:o,status:'run',sel:o.done,chk:false});closeModal();render();toast(t('조립 작업이 시작되었습니다.'),'success')}
+function mAsStatus(){if(!S.as.proc){toast(t('공정을 선택해주세요.'),'warning');return null}const list=AS_ORDERS.filter(o=>o.status!=='대기');
+  return {title:t('작업현황'),sub:t(S.as.proc.nm),width:1300,body:table('asSt',['작업지시번호','기대번호','작업 공정','제품번호','제품명','공정담당자','지시수량','작업실적수량','진행상태'],list.map(o=>[`<span class="mono">${o.no}</span>`,`<span class="mono">${o.ki[Math.min(o.done,o.ki.length-1)]}</span>`,t(S.as.proc.nm),o.item,t(asProd(o.item).nm),t(o.worker),o.qty,o.done,pill(o.status)]),{empty:'진행 중인 작업이 없습니다.',sel:list.indexOf(S._ast)}),
+    foot:`<button class="btn" onclick="closeModal()">${t('닫기')}</button><button class="btn" id="asStToggle" onclick="asStAct('toggle')">${t('재시작 / 작업대기')}</button><button class="btn primary" id="asStLoad" onclick="asStAct('load')">${t('불러오기')}</button>`,after:()=>bindRows('asSt',i=>S._ast=list[i])}}
+function asStAct(k){const o=S._ast,A=S.as;if(!o||o.status==='대기')return toast(t('작업현황을 선택해주세요.'),'warning');if(o.status==='완료')return toast(t('완료된 작업입니다.'),'warning');
+  if(k==='load'){if(A.order&&A.order!==o&&A.order.status==='작업 중')A.order.status='작업대기';Object.assign(A,{order:o,status:{'작업 중':'run','작업대기':'wait','설비고장':'brk'}[o.status]||'run',sel:Math.min(o.done,o.ki.length-1),chk:false});closeModal();render();toast(t('작업을 불러왔습니다.'),'success')}
+  else{o.status=o.status==='작업 중'?'작업대기':'작업 중';if(o===A.order)A.status=o.status==='작업 중'?'run':'wait';render();drawModal();toast(o.status==='작업 중'?t('작업이 재시작되었습니다.'):t('작업대기로 바뀌었습니다.'),'info')}}
+function mOpt(){const o=S.as.order,ki=o.ki[S.as.sel];const rows=o.item==='RG-80100'?[[1,'감속비','Y','GR-52310','출력 기어','1 : 25'],[2,'출력축 형상','Y','SH-41300','출력축 (키 홈)','Ø40'],[3,'오일 종류','Y','OL-0220','기어오일','VG220'],[4,'브리더','N','BV-0010','브리더 밸브','-']]
+  :[[1,'변속단수','Y','GR-52310','출력 기어','4'],[2,'케이스 도장','Y','PT-0101','도장 (회색)','RAL 7035'],[3,'오일 종류','Y','OL-0080','미션오일','75W-90']];
+  return {title:t('조립 옵션'),sub:`${t('기대번호')} ${ki}`,body:table('optG',['기대번호','옵션항목순서','옵션항목명','적용여부','부품코드','부품명','상세스펙'],rows.map(r=>[`<span class="mono">${ki}</span>`,r[0],t(r[1]),r[2]==='Y'?`<span class="pill p-ok">${t('적용')}</span>`:`<span class="pill p-line">${t('미적용')}</span>`,r[3],t(r[4]),r[5]]),{click:false})}}
+const AS_CHK=[['토크 체결값 (M8)','토크렌치','25 N·m',23,27],['오일 주입량','계량','1.2 L',1.15,1.25],['씰 압입 상태','육안','들뜸 없을 것'],['명판 부착','육안','부착 위치 준수']];
+function mAsCheck(){const key='asChk_'+S.as.order.no+'_'+S.as.sel;const v=S.edits[key]||(S.edits[key]={});return {title:t('체크시트'),sub:`${t('조립 자주검사')} · ${S.as.order.ki[S.as.sel]}`,width:1000,body:table('acG',['점검 항목','관리 기준','기준값','하한값','상한값','확인내용 (적합/부적합)'],AS_CHK.map((r,i)=>[t(r[0]),t(r[1]),t(r[2]),r[3]??'',r[4]??'',r[3]!=null?`<input data-i="${i}" value="${v[i]??''}" placeholder="${t('측정값')}">`:`<select data-i="${i}"><option></option><option value="적합" ${v[i]==='적합'?'selected':''}>${t('적합')}</option><option value="부적합" ${v[i]==='부적합'?'selected':''}>${t('부적합')}</option></select>`]),{click:false}),
+  foot:`<button class="btn" onclick="openModal(mDoc,'작업표준서')">${t('작업표준서 바로가기')}</button><button class="btn" onclick="closeModal()">${t('닫기')}</button><button class="btn primary" id="acOk" onclick="saveAsCheck('${key}')">${t('저장')}</button>`,
+  after:()=>document.querySelectorAll('#acG [data-i]').forEach(el=>el.addEventListener('change',()=>v[el.dataset.i]=el.value))}}
+function saveAsCheck(key){const v=S.edits[key];if(AS_CHK.some((r,i)=>!v[i]))return toast(t('모든 점검 항목을 입력해주세요.'),'warning');
+  const ng=AS_CHK.some((r,i)=>r[3]!=null?(+v[i]<r[3]||+v[i]>r[4]):v[i]==='부적합');S.as.chk=true;closeModal();render();toast(ng?t('체크시트가 저장되었습니다. 부적합 항목이 있습니다.'):t('체크시트가 저장되었습니다.'),ng?'warning':'success')}
+function mNoAttach(){const o=S.as.order;const rows=AS_BOM[o.item];return {title:t('미부착 처리'),sub:t('결품으로 조립하지 못한 부품'),width:900,body:`<p class="note">${t('선택한 부품은 미부착으로 등록되어 후속 조치 대상으로 남습니다.')}</p>${table('naG',['부품코드','부품명','도면번호'],rows.map(b=>[b[0],t(b[1]),b[2]]),{sel:rows.indexOf(S._na)})}`,
+  foot:`<button class="btn" onclick="closeModal()">${t('취소')}</button><button class="btn danger" id="naOk" onclick="if(!S._na)return toast(t('부품을 선택해주세요.'),'warning');closeModal();toast(t('{p} 부품이 미부착 처리되었습니다.',{p:S._na[0]}),'success');S._na=null">${t('미부착처리')}</button>`,after:()=>bindRows('naG',i=>S._na=rows[i])}}
+function mAsFinish(){const A=S.as,o=A.order;return {title:t('작업완료처리'),sub:t('공정종료'),width:1300,body:`${table('afG',['작업지시번호','기대번호','공정','작업자','제품번호/제품명','설비명','작업시작일자','작업(근무) 구분','지시수량','생산수량'],[[`<span class="mono">${o.no}</span>`,`<span class="mono">${o.ki[A.sel]}</span>`,t(A.proc.nm),t(o.worker),`${o.item} / ${t(asProd(o.item).nm)}`,t('너트런너 #1'),o.start,t(shiftNow()),o.qty,o.done+1]],{click:false})}
+  ${!A.chk?`<p class="note warn">${t('체크시트가 아직 작성되지 않았습니다.')}</p>`:''}<p class="note">${t('확인을 누르면 이 기대번호의 공정이 완료되고 다음 기대번호로 넘어갑니다.')}</p>`,
+  foot:`<button class="btn" onclick="closeModal()">${t('취소')}</button><button class="btn primary" id="afOk" onclick="asFinish()">${t('확인')}</button>`}}
+function asFinish(){const A=S.as,o=A.order;const k2=o.ki[A.sel];if(A.sel<o.done){closeModal();return toast(t('이미 완료된 기대번호입니다.'),'warning')}
+  o.done=Math.min(o.done+1,o.qty);A.chk=false;
+  if(o.done>=o.qty){o.status='완료';A.status='done';A.sel=o.qty-1;closeModal();render();toast(t('작업지시 {no}의 모든 기대번호가 완료되었습니다.',{no:o.no}),'success');return}
+  A.sel=o.done;closeModal();render();toast(t('{k} 공정이 완료되었습니다. 다음 기대번호로 넘어갑니다.',{k:k2}),'success')}
+
+/* ============================ POP 열처리 · 출고처리 ============================ */
+function htOut(){const H=S.ht;const rows=H.rows.filter(r=>(!H.date||r.d===H.date)&&(!H.q||r.cd.toUpperCase().includes(H.q.toUpperCase())));
+  const today=H.rows.filter(r=>r.d===D0);const good=today.reduce((a,r)=>a+r.g,0),bad=today.reduce((a,r)=>a+r.b,0);
+  const it0=S._htItem||ITEMS[0].cd;const brk=S.brks.find(b=>b.menu==='열처리'&&b.state!=='완료');
+  AFTER.push(()=>{$('#htItem').onchange=e=>{S._htItem=e.target.value;$('#htNm').value=t(item(e.target.value).nm)};$('#htQ').addEventListener('keydown',e=>{if(e.key==='Enter')htSearch()})});
+  return `<div class="head"><div><h1>${t('POP 열처리')} · ${t('출고처리')}</h1><p class="lede">${t('열처리를 마친 품목을 라인 · 품번 단위로 출고 등록하고 LOT 바코드를 발행합니다.')}</p></div>
+    <div class="acts"><span class="clock">${nowStr()}</span><button class="btn lg danger" id="htBreak" onclick="openModal(mBreak,'ht')">${ic('alert')}${t('설비고장')}</button></div></div>
+  <div class="grid g4" style="margin-bottom:14px">
+    <div class="panel kpi"><span class="kl">${t('금일 출고 LOT')}</span><span class="kv num">${today.length}</span><span class="kd">${D0}</span></div>
+    <div class="panel kpi"><span class="kl">${t('금일 양품수량')}</span><span class="kv num">${fmt(good)}</span><span class="kd">EA</span></div>
+    <div class="panel kpi"><span class="kl">${t('금일 불량수량')}</span><span class="kv num" style="color:${bad?'var(--crit)':'inherit'}">${fmt(bad)}</span><span class="kd">${t('불량률')} ${good+bad?(bad/(good+bad)*100).toFixed(2):'0.00'}%</span></div>
+    <div class="panel kpi"><span class="kl">${t('설비 상태')}</span>${stateBox(brk?'brk':'run',brk?`${brk.eq} ${t(brk.eqn)}`:t('열처리 1라인 (연속 침탄로)'))}${brk?`<button class="btn" style="margin-top:6px" onclick="const b=S.brks.find(b=>b.menu==='열처리'&&b.state!=='완료');b.state='완료';b.end=nowStr().slice(0,16);render();toast(t('조치 완료로 처리했습니다.'),'success')">${t('조치 완료')}</button>`:''}</div>
+  </div>
+  <section class="panel" style="margin-bottom:14px"><header><h2>${t('출고처리')}</h2><span class="small muted">* ${t('필수 입력')}</span></header>
+    <div class="toolbar" style="margin:0">
+      <div class="fld">${t('작업일자')} *<input class="input" type="date" id="htD" value="${D0}"></div>
+      <div class="fld">${t('라인')} *<select class="input" id="htLine">${HT_LINES.map(l=>`<option value="${l.cd}">${l.cd} ${t(l.nm)}</option>`).join('')}</select></div>
+      <div class="fld">${t('품목검색')} *<select class="input" id="htItem">${ITEMS.map(i=>`<option value="${i.cd}" ${i.cd===it0?'selected':''}>${i.cd}</option>`).join('')}</select></div>
+      <div class="fld" style="flex:1;min-width:160px">${t('품목명')} *<input class="input" id="htNm" value="${t(item(it0).nm)}" readonly></div>
+      <div class="fld">${t('양품수량')} *<input class="input" type="number" id="htG" value="500" style="width:120px"></div>
+      <div class="fld">${t('불량수량')}<input class="input" type="number" id="htB" value="0" style="width:110px"></div>
+      <button class="btn primary lg" id="htIssueBtn" onclick="htIssue()">${ic('print')}${t('바코드발행')}</button></div></section>
+  <section class="panel"><header><h2>${t('출고처리 내역')}</h2><div class="hs"><input class="input" type="date" id="htSD" value="${H.date}"><input class="input" id="htQ" value="${esc(H.q)}" placeholder="${t('품번')}" style="width:140px"><button class="btn primary" onclick="htSearch()">${t('검색')}</button><button class="btn" onclick="S.ht.q='';S.ht.date=D0;render()">${t('초기화')}</button></div></header>
+    ${table('htG',['No.','LOT No.','품목코드','품목명','양품수량','불량수량','출고일자','LOT No. 발행시각','재발행'],rows.map((r,i)=>[i+1,`<span class="mono">${r.lot}</span>`,r.cd,t(item(r.cd).nm),fmt(r.g),fmt(r.b),r.d,r.t,`<button class="btn" style="padding:3px 10px" onclick="htRe('${r.lot}')">${t('재발행')}${r.re?` (${r.re})`:''}</button>`]),{click:false,empty:'출고처리 내역이 없습니다.',align:['','','','','r','r','','','']})}</section>`}
+function htSearch(){S.ht.date=$('#htSD').value;S.ht.q=$('#htQ').value.trim();render()}
+function htIssue(){const g=+$('#htG').value||0,b=+$('#htB').value||0,d=$('#htD').value;if(!d)return toast(t('작업일자를 입력해주세요.'),'warning');if(g<=0)return toast(t('양품수량을 입력해주세요.'),'warning');if(b<0)return toast(t('불량수량을 확인해주세요.'),'warning');
+  const cd=$('#htItem').value;const lot=`HT${ymd(d)}-${String(S.ht.rows.filter(r=>r.d===d).length+1).padStart(3,'0')}`;
+  S.ht.rows.unshift({lot,line:$('#htLine').value,cd,g,b,d,t:hm(),re:0});S.ht.date=d;S.ht.q='';render();openModal(mHtLabel,lot);toast(t('LOT 바코드가 발행되었습니다.'),'success')}
+function htRe(lot){const r=S.ht.rows.find(x=>x.lot===lot);r.re++;render();openModal(mHtLabel,lot);toast(t('{l} 바코드를 재발행했습니다.',{l:lot}),'success')}
+function mHtLabel(lot){const r=S.ht.rows.find(x=>x.lot===lot);return {title:t('LOT 바코드 발행'),width:560,body:`<div style="display:flex;justify-content:center">${labelHtml({cd:r.cd,no:''},r.g,r.lot,t('열처리반'),t(item(r.cd).nm),t('열처리 (침탄 · 템퍼링)'))}</div>`,foot:`<button class="btn primary" onclick="closeModal()">${t('닫기')}</button>`}}
+
+/* ============================ 모바일 사진 등록 ============================ */
+const curBrk=()=>S.brks[S.brkSel]||S.brks[0];
+function mobile(){const b=curBrk();
+  AFTER.push(()=>$('#brkPick').onchange=e=>{S.brkSel=+e.target.value;render()});
+  return `<div class="head"><div><h1>${t('설비고장 사진 등록')}</h1><p class="lede">${t('설비고장 접수 때 표시된 QR코드를 휴대폰으로 스캔하면 열리는 화면입니다.')}</p></div>
+    <div class="acts"><div class="fld">${t('접수 건 선택')}<select class="input" id="brkPick">${S.brks.map((x,i)=>`<option value="${i}" ${x===b?'selected':''}>${x.no} · ${x.eq} (${t(x.state)})</option>`).join('')}</select></div></div></div>
+  <div class="mobwrap"><div class="phone"><div class="screen">
+    <div class="mbar">${ic('wrench')}${t('설비고장 사진 등록')}</div>
+    <div class="mbody">
+      <div class="tablewrap"><table><tbody><tr><th>${t('설비고장접수번호')}</th><td class="mono">${b.no}</td></tr><tr><th>${t('설비')}</th><td>${b.eq} / ${t(b.eqn)}</td></tr><tr><th>${t('고장코드')}</th><td>${b.cd} ${t(brkName(b.cd))}</td></tr><tr><th>${t('접수시각')}</th><td>${b.time}</td></tr></tbody></table></div>
+      <div class="photo ${b.photo?'has':''}">${b.photo?`<div style="text-align:center">📷 ${t('고장 부위 사진')}<br><small>breakdown_photo_01.jpg</small></div>`:t('[사진촬영]을 눌러 고장 부위를 촬영하세요.')}</div>
+      ${b.sent?`<p class="note" style="border-color:var(--ok)">${t('사진이 접수 건에 첨부되었습니다.')}</p>`:''}
+      <div class="mbtns"><button class="btn primary" id="mShot" ${b.sent?'disabled':''} onclick="mobShot()">${t('사진촬영')}</button><button class="btn primary" id="mSend" style="background:var(--ok);border-color:var(--ok)" ${!b.photo||b.sent?'disabled':''} onclick="mobSend()">${t('보내기')}</button><button class="btn" onclick="mobClose()">${t(b.sent?'닫기':'취소')}</button></div>
+    </div></div></div>
+    <section class="panel"><header><h2>${t('사용 순서')}</h2></header><ol class="steps">
+      <li>${t('POP에서 [설비고장]을 접수하면 접수번호와 QR코드가 표시됩니다.')}</li><li>${t('휴대폰으로 QR코드를 스캔해 이 화면을 엽니다.')}</li><li>${t('접수번호 · 설비 · 고장코드를 확인합니다.')}</li><li>${t('[사진촬영]으로 고장 부위를 찍고 [보내기]를 누릅니다.')}</li><li>${t('첨부한 사진은 작업정보 > 설비고장관리의 [상세]에서 확인합니다.')}</li></ol>
+      <div style="display:flex;gap:16px;align-items:center;margin-top:14px;flex-wrap:wrap">${qrHtml(b.no)}<div class="small muted">${t('접수번호')} <span class="mono">${b.no}</span><br>${t('목업에서는 왼쪽 휴대폰 화면에서 바로 동작을 확인할 수 있습니다.')}</div></div></section></div>`}
+function mobShot(){curBrk().photo=true;render();toast(t('사진을 촬영했습니다.'),'success')}
+function mobSend(){const b=curBrk();b.sent=true;if(b.state==='접수')b.state='조치 중';render();toast(t('사진을 보냈습니다.'),'success')}
+function mobClose(){const b=curBrk();if(!b.sent){b.photo=false;render();toast(t('사진 등록을 취소했습니다.'),'info')}else toast(t('창을 닫습니다. (목업에서는 화면이 유지됩니다)'),'info')}
+
+/* ============================ 알림 ============================ */
+const CAT_CLS={'설비보전':['var(--crit)','p-crit'],'품질':['var(--warn)','p-warn'],'생산':['var(--accent)','p-acc']};
+function alarmPage(){const f=S._af||'전체';const list=S.alarms.filter(a=>f==='전체'||a.cat===f);
+  return `<div class="head"><div><h1>${t('알림')}</h1><p class="lede">${t('설비보전 · 품질 · 생산 알림을 모아 봅니다.')}</p></div><div class="acts"><button class="btn" id="readAll" onclick="S.alarms.forEach(a=>a.read=true);render();toast(t('모두 읽음으로 표시했습니다.'),'success')">${ic('check')}${t('전체 읽음')}</button></div></div>
+  <section class="panel"><div class="toolbar">${['전체','설비보전','품질','생산'].map(x=>`<button class="chip" aria-pressed="${f===x}" onclick="S._af='${x}';render()">${t(x)} (${x==='전체'?S.alarms.length:S.alarms.filter(a=>a.cat===x).length})</button>`).join('')}</div>
+    ${list.length?`<div class="stack" style="gap:8px">${list.map(a=>`<div class="alarm" style="background:${a.read?'var(--surface)':'var(--surface2)'}">
+      <span class="sev" style="background:${CAT_CLS[a.cat][0]}"></span>
+      <div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="pill ${CAT_CLS[a.cat][1]}">${t(a.cat)}</span>${a.read?'':`<span class="pill p-line">${t('안 읽음')}</span>`}<span class="small muted">${a.time}</span></div><div style="margin-top:4px;font-weight:${a.read?500:700}">${esc(a.vars?t(a.text,{eq:a.vars.eq+' '+t(a.vars.eqn),no:a.vars.no}):t(a.text))}</div></div>
+      <div style="display:flex;gap:6px">${a.read?'':`<button class="btn" onclick="S.alarms.find(x=>x.id===${a.id}).read=true;render()">${t('읽음')}</button>`}<button class="btn" onclick="S.alarms=S.alarms.filter(x=>x.id!==${a.id});render()">${t('삭제')}</button></div></div>`).join('')}</div>`
+    :`<div class="emptybox">${t('알림이 없습니다.')}</div>`}</section>`}
+</script>
+<script>
+/* ============================ 번역 사전 (영어 · 일본어) ============================ */
+const DICT={"en": {"08시": "08:00", "10시": "10:00", "13시": "13:00", "15시": "15:00", "17시": "17:00", "4M 변경 (작업자 · 설비 · 자재 · 방법)": "4M change (Man · Machine · Material · Method)", "BOM수량": "BOM qty", "BOP 기준 부품": "Parts per BOP", "BOP수량": "BOP qty", "CNC 선반 #1": "CNC lathe #1", "EQ-1301 로봇 용접기 #1 고장을 조치하고 있습니다.": "EQ-1301 Robot welder #1 breakdown is being repaired.", "ERP로 재전송했습니다.": "Resent to ERP.", "LOT No. 발행시각": "LOT No. issued at", "LOT 바코드 발행": "Issue LOT barcode", "LOT 바코드 발행 · 재발행": "Issue · reissue LOT barcodes", "LOT 바코드가 발행되었습니다.": "LOT barcode issued.", "LOT 식별표": "LOT tag", "LOT 식별표 {n}장이 출력되었습니다.": "{n} LOT tag(s) printed.", "LOT 투입": "LOT input", "MES 연결 정상": "MES connected", "OP10 선삭": "OP10 Turning", "OP10 선삭 작업표준서가 Rev.03으로 개정되었습니다.": "OP10 Turning work standard was revised to Rev.03.", "OP20 밀링": "OP20 Milling", "OP30 호빙": "OP30 Hobbing", "OP40 연삭": "OP40 Grinding", "OP50 용접": "OP50 Welding", "POP 가공": "POP Machining", "POP 열처리": "POP Heat Treatment", "POP 조립": "POP Assembly", "POP에서 [설비고장]을 접수하면 접수번호와 QR코드가 표시됩니다.": "When a [Breakdown] is registered in POP, a ticket number and QR code are shown.", "QR 스캔 · 모바일": "QR scan · Mobile", "Ra 1.6 이하": "Ra 1.6 or less", "[사진촬영]으로 고장 부위를 찍고 [보내기]를 누릅니다.": "Take a photo of the failed part with [Take photo], then tap [Send].", "[사진촬영]을 눌러 고장 부위를 촬영하세요.": "Tap [Take photo] to shoot the failed part.", "[품목검색]으로 선택": "Select via [Item search]", "{eq} 설비고장이 접수되었습니다. (접수번호 {no})": "{eq} breakdown registered. (Ticket {no})", "{k} 공정이 완료되었습니다. 다음 기대번호로 넘어갑니다.": "{k} process completed. Moving to the next unit No.", "{l} 라인으로 변경되었습니다.": "Changed to line {l}.", "{l} 바코드를 재발행했습니다.": "Reissued barcode {l}.", "{l} 식별표를 재발행했습니다.": "Reissued tag {l}.", "{n}건이 조회되었습니다.": "{n} record(s) found.", "{n}분": "{n} min", "{p} 공정으로 변경되었습니다.": "Changed to process {p}.", "{p} 부품이 미부착 처리되었습니다.": "{p} marked as not attached.", "{s} 상태로 바뀌었습니다. 비가동 시간이 기록됩니다.": "Status changed to {s}. Downtime is being recorded.", "가공": "Machining", "가공 1라인": "Machining line 1", "가공 1라인에 오늘 작업지시 2건이 내려왔습니다.": "2 work orders were released to Machining line 1 today.", "가공 2라인": "Machining line 2", "가공 3라인 (용접)": "Machining line 3 (Welding)", "가공 4라인": "Machining line 4", "가공 5라인 (작지생성)": "Machining line 5 (WO creation)", "가공 라인 목록": "Machining lines", "가동시간(분)": "Run time (min)", "감속기 ASSY (2단)": "Reducer ASSY (2-stage)", "감속기 하우징": "Reducer housing", "감속비": "Reduction ratio", "개정 검토 요청": "Request revision review", "개정 검토 요청 내용": "Revision review request", "개정 검토 요청을 보냈습니다.": "Revision review request sent.", "개정번호": "Revision", "검사 결과를 하나 이상 입력해주세요.": "Enter at least one inspection result.", "검사 주기 변경": "Inspection interval change", "검색": "Search", "검색 결과가 없습니다.": "No results.", "검색어": "Keyword", "결품으로 조립하지 못한 부품": "Parts not assembled due to shortage", "경과분": "Elapsed min", "경과시간": "Elapsed", "계량": "Weighing", "계획수량": "Planned qty", "계획수량(EA)": "Planned qty (EA)", "고장 내용": "Breakdown details", "고장 부위 사진": "Photo of failed part", "고장명칭": "Breakdown name", "고장시작": "Breakdown start", "고장요인": "Cause", "고장종료": "Breakdown end", "고장코드": "Breakdown code", "고주파 열처리기 #1": "Induction hardener #1", "공구 마모로 교체": "Replaced due to tool wear", "공구 파손": "Tool breakage", "공장": "Plant", "공정": "Process", "공정 출고 (합계 : {n})": "Process issue (Total: {n})", "공정담당자": "Process owner", "공정명": "Process name", "공정번호": "Process No.", "공정변경": "Change process", "공정선택": "Select process", "공정을 선택해주세요.": "Select a process.", "공정종료": "End process", "공정코드": "Process code", "공통": "Common", "관리 기준": "Control criteria", "관리계획서": "Control plan", "근무 구분": "Shift", "근무 구분이 {s}(으)로 바뀌었습니다.": "Shift changed to {s}.", "금일 불량수량": "Defects today", "금일 양품수량": "Good qty today", "금일 출고 LOT": "LOTs issued today", "기간별 작업지시를 조회하고 설비고장 · 불량 · 비가동 · 생산실적을 확인합니다.": "View work orders by period and check breakdowns, defects, downtime and output.", "기공": "Porosity", "기대번호": "Unit No.", "기대번호 {k}가 지정되었습니다.": "Unit No. {k} selected.", "기대번호 · BOM · 공정종료": "Unit No. · BOM · End process", "기대번호 선택": "Select unit No.", "기대번호별 사양": "Spec by unit No.", "기어 조립": "Gear assembly", "기어오일": "Gear oil", "기준값": "Nominal", "기타": "Other", "내경 Ø45 H7": "Bore Ø45 H7", "내려온 작업지시가 없습니다.": "No work orders released.", "내역이 없습니다.": "No records.", "냉각수 부족": "Low coolant", "너트런너 #1": "Nutrunner #1", "노즐 Ø16": "Nozzle Ø16", "누유 검사": "Leak test", "누유 시험기 #1": "Leak tester #1", "누적생산수량(EA)": "Cumulative output (EA)", "다음": "Next", "단조 소재": "Forged blank", "닫기": "Close", "달성율(%)": "Achievement (%)", "대": "Large", "대기": "Waiting", "대표설비명": "Main equipment", "대표설비코드": "Main equipment code", "도면": "Drawing", "도면 이미지 영역": "Drawing image area", "도면번호": "Drawing No.", "도번": "Dwg No.", "도장 (회색)": "Painting (gray)", "들뜸 없을 것": "No lifting", "라인": "Line", "라인(공정)을 고르면 해당 작업지시 목록이 조회됩니다.": "Pick a line (process) to list its work orders.", "라인명": "Line name", "라인변경": "Change line", "라인선택": "Select line", "라인을 선택하면 재고가 표시됩니다.": "Select a line to see stock.", "라인을 선택해주세요.": "Select a line.", "라인코드": "Line code", "로그아웃": "Log out", "로그아웃되었습니다. (목업에서는 화면이 유지됩니다)": "Logged out. (The screen stays in this mockup.)", "로더 #1": "Loader #1", "로봇 용접기 #1": "Robot welder #1", "머시닝센터 #2": "Machining center #2", "먼저 [공정선택]으로 이 단말이 담당할 조립 공정을 고르세요.": "First choose the assembly process for this terminal with [Select process].", "먼저 [라인선택]으로 이 단말이 담당할 가공 라인을 고르세요.": "First choose the machining line for this terminal with [Select line].", "명판 부착": "Nameplate attachment", "모두 읽음으로 표시했습니다.": "Marked all as read.", "모든 점검 항목을 입력해주세요.": "Fill in every check item.", "모바일 등록": "Mobile upload", "모바일 화면 열기": "Open mobile screen", "목업에서는 왼쪽 휴대폰 화면에서 바로 동작을 확인할 수 있습니다.": "In this mockup, you can try it right on the phone screen on the left.", "목표대비 달성율": "Achievement vs. target", "무가동1": "Idle 1", "무가동1시간": "Idle 1 time", "무가동2": "Idle 2", "무가동2시간": "Idle 2 time", "무가동3": "Idle 3", "무가동3시간": "Idle 3 time", "무가동4": "Idle 4", "무가동4시간": "Idle 4 time", "문서": "Documents", "문서 개정 목록": "Revision history", "미가공": "Unmachined", "미부착": "Not attached", "미부착 처리": "Mark not attached", "미부착처리": "Not attached", "미션 ASSY (4단)": "Transmission ASSY (4-speed)", "미션 케이스": "Transmission case", "미션오일": "Transmission oil", "미작성": "Not written", "미적용": "Not applied", "밀링": "Milling", "바코드": "Barcode", "바코드 입력": "Enter barcode", "바코드 출력": "Barcode printing", "바코드 출력 상세": "Barcode print details", "바코드 출력 장수": "Copies", "바코드R": "Barcode R", "바코드를 스캔하거나 직접 입력한 뒤 [완료]를 누르세요.": "Scan or type the barcode, then press [Done].", "바코드를 입력해주세요.": "Enter a barcode.", "바코드발행": "Issue barcode", "발행한 바코드가 없습니다.": "No barcodes issued.", "버(Burr)": "Burr", "버(Burr) 유무": "Burr check", "베어링 6205": "Bearing 6205", "변경": "Change", "변경 없음": "No change", "변속단수": "Gears", "보내기": "Send", "볼트 체결 (너트런너)": "Bolt tightening (nutrunner)", "부적합": "NG", "부착 위치 준수": "Correct position", "부품 (BOM)": "Parts (BOM)", "부품 {n}건을 요청했습니다.": "Requested {n} part(s).", "부품 투입": "Parts input", "부품 투입(BOM)": "Parts input (BOM)", "부품명": "Part name", "부품불량수량": "Part defects", "부품요청": "Request parts", "부품을 선택해주세요.": "Select a part.", "부품코드": "Part code", "불량내역": "Defects", "불량률": "Defect rate", "불량수량": "Defect qty", "불량수량(EA)": "Defect qty (EA)", "불량수량을 확인해주세요.": "Check the defect qty.", "불량유형": "Defect type", "불러오기": "Load", "브리더": "Breather", "브리더 밸브": "Breather valve", "비가동": "Downtime", "비가동관리": "Downtime", "비가동내역": "Downtime records", "비가동명칭": "Downtime name", "비가동시간(분)": "Downtime (min)", "비가동시작": "Downtime start", "비가동종료": "Downtime end", "비가동코드": "Downtime code", "비고": "Remarks", "사용 순서": "How to use", "사진 등록을 취소했습니다.": "Photo upload canceled.", "사진 등록하기": "Upload photo", "사진을 보냈습니다.": "Photo sent.", "사진을 촬영했습니다.": "Photo taken.", "사진이 접수 건에 첨부되었습니다.": "Photo attached to the ticket.", "사진촬영": "Take photo", "삭제": "Delete", "상세": "Details", "상세보기": "View details", "상세스펙": "Detailed spec", "상한값": "Upper limit", "생산": "Production", "생산/불량관리": "Output / Defects", "생산1팀": "Production Team 1", "생산1팀 · {s} 근무": "Production Team 1 · {s} shift", "생산1팀 · 가공반": "Production Team 1 · Machining", "생산수량": "Output", "생산수량 {n}EA가 저장되었습니다.": "Saved output of {n} EA.", "생산수량(EA)": "Output (EA)", "생산수량({a})이 지시수량({b})보다 적습니다. 그래도 작업을 종료할까요?": "Output ({a}) is below the ordered qty ({b}). End the job anyway?", "생산수량을 입력해주세요.": "Enter the output.", "생산수량을 직접 입력해 저장합니다.": "Enter the output manually and save.", "생산실적": "Output", "생산실적/비가동": "Output / Downtime", "생산율(%)": "Output rate (%)", "생산일자": "Production date", "선공정 → 후공정": "Upstream → Downstream", "선삭": "Turning", "선택": "Select", "선택한 부품은 미부착으로 등록되어 후속 조치 대상으로 남습니다.": "The selected part is recorded as not attached and stays open for follow-up.", "설비": "Equipment", "설비 · 품질 · 생산 알림": "Equipment · Quality · Production alerts", "설비 모드": "Equipment mode", "설비 상태": "Equipment status", "설비 수리 후 재가동": "Restarted after repair", "설비 카운터로 생산수량이 자동 집계됩니다.": "Output is counted automatically by the equipment counter.", "설비고장": "Breakdown", "설비고장 · 불량 · 비가동 · 실적": "Breakdowns · Defects · Downtime · Output", "설비고장 사진 등록": "Breakdown photo upload", "설비고장 상태입니다. 조치가 끝나면 [작업현황]에서 재시작하세요.": "Equipment is broken down. Restart from [Job status] once repaired.", "설비고장 요인 상세": "Breakdown cause details", "설비고장 접수": "Register breakdown", "설비고장 접수 때 표시된 QR코드를 휴대폰으로 스캔하면 열리는 화면입니다.": "This screen opens when you scan the QR code shown at breakdown registration with a phone.", "설비고장관리": "Breakdowns", "설비고장내역": "Breakdown records", "설비고장이 접수되었습니다.": "Breakdown registered.", "설비고장접수": "Register breakdown", "설비고장접수번호": "Breakdown ticket No.", "설비명": "Equipment", "설비보전": "Maintenance", "설비보전 · 품질 · 생산 알림을 모아 봅니다.": "All maintenance, quality and production alerts in one place.", "설비점검": "Equipment check", "설비코드": "Equipment code", "설비코드 / 설비명": "Equipment code / name", "센서 이상": "Sensor fault", "소요량": "Required qty", "소재": "Material", "소재 LOT가 투입되었습니다.": "Material LOT added.", "소재 입고 (자재창고)": "Material receipt (warehouse)", "소재 투입": "Material input", "소재대기": "Waiting for material", "소재대기중": "Waiting for material", "수동 모드": "Manual mode", "수량": "Qty", "수량을 입력해주세요.": "Enter a quantity.", "스냅링 Ø30": "Snap ring Ø30", "시작시간": "Start time", "시작일": "From", "시작일자": "Start date", "실적정보": "Performance", "씰 압입 상태": "Seal press-fit condition", "안 읽음": "Unread", "알림": "Alerts", "알림이 없습니다.": "No alerts.", "압입 프레스 #1": "Press-fit press #1", "야간": "Night", "양품수량": "Good qty", "양품수량(EA)": "Good qty (EA)", "양품수량을 입력해주세요.": "Enter the good qty.", "언어": "Language", "없을 것": "None", "연삭": "Grinding", "연삭기 #1": "Grinder #1", "연속 침탄로 #1": "Continuous carburizing furnace #1", "열처리": "Heat treatment", "열처리 (침탄 · 템퍼링)": "Heat treatment (carburizing · tempering)", "열처리 1라인 (연속 침탄로)": "Heat treatment line 1 (continuous carburizing)", "열처리 2라인 (고주파)": "Heat treatment line 2 (induction)", "열처리를 마친 품목을 라인 · 품번 단위로 출고 등록하고 LOT 바코드를 발행합니다.": "Register issues of heat-treated items by line and part No., and issue LOT barcodes.", "열처리반": "Heat Treatment", "예: 오후 2시 전까지 라인으로 보내 주세요.": "e.g. Please deliver to the line by 2 PM.", "오일 종류": "Oil type", "오일 주입량": "Oil fill volume", "오일씰 Ø45": "Oil seal Ø45", "옵션항목명": "Option item", "옵션항목순서": "Option order", "완료": "Done", "완료된 작업입니다.": "This job is already completed.", "외경 Ø62": "OD Ø62", "외관 찍힘": "Dent", "요청": "Request", "요청 내용을 입력해주세요.": "Enter the request details.", "요청 메모": "Request note", "요청수량": "Request qty", "요청수량을 하나 이상 입력해주세요.": "Enter at least one request qty.", "용접 와이어 Ø1.2": "Welding wire Ø1.2", "용접 팁 M6": "Welding tip M6", "위 목록에서 작업지시를 선택하세요.": "Select a work order from the list above.", "유압 압력 저하": "Low hydraulic pressure", "육각볼트 M8×25": "Hex bolt M8×25", "육안": "Visual", "이 작업지시의 기대번호가 아닙니다.": "This unit No. does not belong to this work order.", "이동대차 단위 LOT 식별표 발행": "Issue LOT tags per cart", "이동대차수": "Carts", "이동대차수와 수량을 입력해주세요.": "Enter the carts and quantity.", "이미 완료된 기대번호입니다.": "This unit No. is already completed.", "이미 투입된 LOT입니다.": "This LOT has already been added.", "이전": "Previous", "이전 작업의 소재 LOT 잔량": "Remaining material LOT from the previous job", "이전에 멈춘 작업지시가 {n}건 있습니다. [작업현황]에서 불러와 재시작할 수 있습니다.": "There are {n} paused work order(s). Load and restart them from [Job status].", "일반": "Normal", "일자": "Date", "읽음": "Read", "입력 가능한 기대번호": "Available unit Nos.", "입력축 샤프트": "Input shaft", "자동 모드": "Auto mode", "자동 모드에서는 설비 카운터 값이 생산수량에 쌓입니다. [저장]을 누르면 누적생산수량에 반영됩니다.": "In auto mode, the equipment counter adds to the output. Press [Save] to add it to cumulative output.", "자동차부품 제조업 POP": "Automotive Parts Manufacturing POP", "자재 LOT 변경": "Material LOT change", "자재대기": "Waiting for material", "자주검사 · 4M 변경 기록": "Self-inspection · 4M change log", "작성 완료": "Completed", "작업 공정": "Work process", "작업 대기": "Waiting", "작업 대상": "Target", "작업 상태": "Job status", "작업 순서 · 사진 영역": "Work steps · photo area", "작업 시작 · 생산 입력 · 바코드": "Start job · Enter output · Barcodes", "작업 완료": "Job done", "작업 중": "Running", "작업 중으로 돌아왔습니다.": "Back to running.", "작업 중이 아닙니다.": "No job is running.", "작업 집계": "Job summary", "작업(근무) 구분": "Shift", "작업공정": "Work process", "작업대기": "On hold", "작업대기 시작시간": "Hold start", "작업대기로 바뀌었습니다.": "Changed to on hold.", "작업대기중": "On hold", "작업반명": "Work group", "작업방법 변경": "Work method change", "작업시간": "Work time", "작업시작": "Start job", "작업시작시간": "Start time", "작업시작일자": "Start date", "작업실적 수량": "Output qty", "작업실적수량": "Output qty", "작업완료처리": "Complete job", "작업을 불러왔습니다.": "Job loaded.", "작업을 선택해주세요.": "Select a job.", "작업을 시작하면 집계가 표시됩니다.": "The summary appears once a job starts.", "작업이 시작되었습니다.": "Job started.", "작업이 완료 처리되었습니다.": "Job completed.", "작업이 재시작되었습니다.": "Job restarted.", "작업일자": "Work date", "작업일자를 입력해주세요.": "Enter the work date.", "작업자": "Worker", "작업자 / 부서명": "Worker / Dept.", "작업자 변경": "Worker change", "작업자A": "Worker A", "작업자B": "Worker B", "작업자C": "Worker C", "작업자D": "Worker D", "작업자E": "Worker E", "작업자F": "Worker F", "작업자G": "Worker G", "작업자H": "Worker H", "작업재시작": "Restart job", "작업정보": "Job info", "작업종료": "End job", "작업종료시간": "End time", "작업준비": "Preparing", "작업준비중": "Preparing", "작업중인수량": "In progress", "작업지시": "Work order", "작업지시 {no}가 생성되었습니다.": "Work order {no} created.", "작업지시 {no}의 모든 기대번호가 완료되었습니다.": "All unit Nos. in work order {no} are completed.", "작업지시 번호": "Work order No.", "작업지시 생성": "Create work order", "작업지시 생성이 허용된 라인입니다.": "This line may create work orders.", "작업지시 정보": "Work order info", "작업지시 진행율": "Work order progress", "작업지시를 시작하면 기대번호가 표시됩니다.": "Unit Nos. appear once a work order starts.", "작업지시목록": "Work orders", "작업지시번호": "Work order No.", "작업지시번호 · 품목 · LOT 검색": "Search work order · item · LOT", "작업지시자": "Issued by", "작업표준서": "Work standard", "작업표준서 바로가기": "Open work standard", "작업현황": "Job status", "작업현황 - {p}": "Job status - {p}", "작업현황을 선택해주세요.": "Select a job in Job status.", "작지번호": "WO No.", "작지생성": "Create WO", "잔량이 처리되었습니다.": "Remaining qty processed.", "잔량처리": "Process remainder", "장비번호": "Equipment No.", "재고 조회": "Stock", "재고량": "Stock qty", "재고위치": "Location", "재발행": "Reissue", "재발행할 항목을 선택해주세요.": "Select an item to reissue.", "재생": "Recycled", "재생구분": "Recycle type", "재시작 / 작업대기": "Restart / Hold", "재시작 시간": "Restart time", "재전송": "Resend", "저장": "Save", "저장 후 ERP로 전송했습니다.": "Saved and sent to ERP.", "저장/전송": "Save / Send", "저장/출력": "Save / Print", "적용": "Apply", "적용여부": "Applied", "적합": "OK", "전 작업(라인)": "Previous step (line)", "전송 완료": "Sent", "전장": "Overall length", "전체": "All", "전체 : {n} 건": "Total: {n}", "전체 읽음": "Mark all read", "전체화면": "Full screen", "전체화면을 열 수 없습니다.": "Unable to open full screen.", "점검 항목": "Check item", "접수": "Received", "접수 건 선택": "Select ticket", "접수번호": "Ticket No.", "접수번호 · 설비 · 고장코드를 확인합니다.": "Check the ticket No., equipment and breakdown code.", "접수시각": "Received at", "접수자": "Reported by", "접수하면 작업 상태가 설비고장으로 바뀌고 접수번호와 QR코드가 표시됩니다. 휴대폰으로 QR코드를 스캔해 고장 부위 사진을 첨부할 수 있습니다.": "Once registered, the job status changes to Breakdown and a ticket number and QR code are shown. Scan the QR code with a phone to attach photos of the failed part.", "제1공장": "Plant 1", "제2공장": "Plant 2", "제품명": "Product name", "제품번호": "Product No.", "제품번호 / 제품명": "Product No. / name", "제품번호/제품명": "Product No./name", "제품코드": "Product code", "제품코드 / 제품명": "Product code / name", "조건에 맞는 공정이 없습니다.": "No matching processes.", "조건에 맞는 라인이 없습니다.": "No matching lines.", "조건에 맞는 작업지시가 없습니다.": "No matching work orders.", "조립": "Assembly", "조립 1라인": "Assembly line 1", "조립 2라인": "Assembly line 2", "조립 공정 선택": "Select assembly process", "조립 문서": "Assembly documents", "조립 옵션": "Assembly options", "조립 자주검사": "Assembly self-inspection", "조립 작업이 시작되었습니다.": "Assembly job started.", "조립1팀": "Assembly Team 1", "조립옵션": "Options", "조치 완료": "Resolved", "조치 완료로 처리했습니다.": "Marked as resolved.", "조치 중": "In repair", "조회": "Search", "조회 건수 {n}건": "{n} record(s)", "조회구분": "Search by", "조회된 데이터가 없습니다.": "No data found.", "종료시간": "End time", "종료일": "To", "종품": "Last piece", "주간": "Day", "주축 이상": "Spindle fault", "주축 회전 시 이상 소음 발생": "Abnormal noise when the spindle rotates", "준비": "Preparing", "중": "Medium", "중점 관리 항목": "Key control items", "지시수량": "Ordered qty", "지시수량을 모두 생산했습니다.": "The ordered qty has been fully produced.", "진행 중": "In progress", "진행 중인 작업이 없습니다.": "No job in progress.", "진행 중인 작업이 있습니다. 작업대기나 작업종료 후 로그아웃하세요.": "A job is in progress. Put it on hold or end it before logging out.", "진행상태": "Status", "창을 닫습니다. (목업에서는 화면이 유지됩니다)": "Closing the window. (The screen stays in this mockup.)", "처리": "Process", "처리현황": "Progress", "첨부된 사진이 없습니다.": "No photos attached.", "첨부파일": "Attachments", "첨부한 사진은 작업정보 > 설비고장관리의 [상세]에서 확인합니다.": "Attached photos can be viewed under Job info > Breakdowns > [Details].", "체크시트": "Check sheet", "체크시트가 아직 작성되지 않았습니다.": "The check sheet has not been filled in yet.", "체크시트가 저장되었습니다.": "Check sheet saved.", "체크시트가 저장되었습니다. 부적합 항목이 있습니다.": "Check sheet saved. Some items are NG.", "체크시트가 저장되었습니다. 한계값을 벗어난 항목이 있습니다.": "Check sheet saved. Some items are out of limits.", "초기화": "Reset", "초품": "First piece", "총근무시간(분)": "Total shift time (min)", "총생산수량": "Total output", "최종 검사": "Final inspection", "최초 제정": "Initial release", "출고 내역이 없습니다.": "No issue records.", "출고일자": "Issue date", "출고처리": "Issue processing", "출고처리 내역": "Issue records", "출고처리 내역이 없습니다.": "No issue records.", "출력 기어": "Output gear", "출력축 (키 홈)": "Output shaft (keyway)", "출력축 형상": "Output shaft shape", "출하 검사": "Shipping inspection", "취소": "Cancel", "측정": "Measured", "측정값": "Measured value", "측정값이 한계값을 벗어나면 빨간색으로 표시됩니다.": "Values outside the limits are shown in red.", "측정구분": "Method", "치수 공차 변경": "Dimension tolerance change", "치수 불량": "Dimension defect", "케이스 도장": "Case painting", "테마 전환": "Toggle theme", "템퍼링로 #1": "Tempering furnace #1", "토치 위치 센서 신호 불안정": "Unstable torch position sensor signal", "토크 체결값 (M8)": "Tightening torque (M8)", "토크렌치": "Torque wrench", "투입된 소재 LOT가 없습니다.": "No material LOT added.", "투입량": "Input qty", "투입한 소재 LOT({l})의 잔량을 함께 처리합니다.": "The remaining qty of material LOT ({l}) will also be processed.", "특이사항": "Notes", "평와셔 M10": "Flat washer M10", "평행 키 8×7": "Parallel key 8×7", "표면 거칠기": "Surface roughness", "표준작업시간": "Standard time", "품명": "Item name", "품목": "Item", "품목 검색": "Item search", "품목검색": "Item search", "품목명": "Item name", "품목을 먼저 선택해주세요.": "Select an item first.", "품목을 선택해주세요.": "Select an item.", "품목코드": "Item code", "품번": "Part No.", "품질": "Quality", "품질 확인 대기": "Waiting for quality check", "플랜지 커버": "Flange cover", "플러그 PT1/4": "Plug PT1/4", "필수 입력": "Required", "하나의 항목을 선택해주세요.": "Select one item.", "하우징 (가공품)": "Housing (machined)", "하우징 압입": "Housing press-fit", "하한값": "Lower limit", "한계값": "Limit", "합계 수량 {n} EA": "Total qty {n} EA", "항목": "Item", "현장 실적관리 시스템": "Shop-floor performance system", "현장에서 확인한 개정 필요 사항을 입력하세요.": "Enter the revisions needed that you found on the floor.", "현재": "Current", "현재 공정(라인)": "Current step (line)", "호빙": "Hobbing", "호빙기 #1": "Hobbing machine #1", "확인": "OK", "확인내용 (적합/부적합)": "Result (OK/NG)", "확인을 누르면 이 기대번호의 공정이 완료되고 다음 기대번호로 넘어갑니다.": "Press OK to complete this unit No. and move to the next one.", "후 공정(라인)": "Next step (line)", "휴대폰으로 QR을 스캔하면 사진 등록 화면이 열립니다.": "Scan the QR with a phone to open the photo upload screen.", "휴대폰으로 QR코드를 스캔해 이 화면을 엽니다.": "Scan the QR code with a phone to open this screen."}, "ja": {"08시": "08時", "10시": "10時", "13시": "13時", "15시": "15時", "17시": "17時", "4M 변경 (작업자 · 설비 · 자재 · 방법)": "4M変更（作業者・設備・資材・方法）", "BOM수량": "BOM数量", "BOP 기준 부품": "BOP基準部品", "BOP수량": "BOP数量", "CNC 선반 #1": "CNC旋盤 #1", "EQ-1301 로봇 용접기 #1 고장을 조치하고 있습니다.": "EQ-1301 ロボット溶接機 #1 の故障を処置中です。", "ERP로 재전송했습니다.": "ERPへ再送信しました。", "LOT No. 발행시각": "LOT No. 発行時刻", "LOT 바코드 발행": "LOTバーコード発行", "LOT 바코드 발행 · 재발행": "LOTバーコード発行・再発行", "LOT 바코드가 발행되었습니다.": "LOTバーコードを発行しました。", "LOT 식별표": "LOT識別票", "LOT 식별표 {n}장이 출력되었습니다.": "LOT識別票を{n}枚出力しました。", "LOT 투입": "LOT投入", "MES 연결 정상": "MES接続正常", "OP10 선삭": "OP10 旋削", "OP10 선삭 작업표준서가 Rev.03으로 개정되었습니다.": "OP10 旋削の作業標準書がRev.03に改訂されました。", "OP20 밀링": "OP20 ミーリング", "OP30 호빙": "OP30 ホブ加工", "OP40 연삭": "OP40 研削", "OP50 용접": "OP50 溶接", "POP 가공": "POP 加工", "POP 열처리": "POP 熱処理", "POP 조립": "POP 組立", "POP에서 [설비고장]을 접수하면 접수번호와 QR코드가 표시됩니다.": "POPで[設備故障]を受付すると、受付番号とQRコードが表示されます。", "QR 스캔 · 모바일": "QRスキャン・モバイル", "Ra 1.6 이하": "Ra 1.6 以下", "[사진촬영]으로 고장 부위를 찍고 [보내기]를 누릅니다.": "[写真撮影]で故障箇所を撮影し、[送信]を押します。", "[사진촬영]을 눌러 고장 부위를 촬영하세요.": "[写真撮影]を押して故障箇所を撮影してください。", "[품목검색]으로 선택": "[品目検索]で選択", "{eq} 설비고장이 접수되었습니다. (접수번호 {no})": "{eq} の設備故障を受付しました。（受付番号 {no}）", "{k} 공정이 완료되었습니다. 다음 기대번호로 넘어갑니다.": "{k} の工程が完了しました。次の機台番号へ進みます。", "{l} 라인으로 변경되었습니다.": "{l} ラインに変更しました。", "{l} 바코드를 재발행했습니다.": "{l} のバーコードを再発行しました。", "{l} 식별표를 재발행했습니다.": "{l} の識別票を再発行しました。", "{n}건이 조회되었습니다.": "{n}件を照会しました。", "{n}분": "{n}分", "{p} 공정으로 변경되었습니다.": "{p} 工程に変更しました。", "{p} 부품이 미부착 처리되었습니다.": "{p} を未取付として処理しました。", "{s} 상태로 바뀌었습니다. 비가동 시간이 기록됩니다.": "{s} 状態に変わりました。非稼働時間を記録します。", "가공": "加工", "가공 1라인": "加工1ライン", "가공 1라인에 오늘 작업지시 2건이 내려왔습니다.": "加工1ラインに本日の作業指示が2件届きました。", "가공 2라인": "加工2ライン", "가공 3라인 (용접)": "加工3ライン（溶接）", "가공 4라인": "加工4ライン", "가공 5라인 (작지생성)": "加工5ライン（作業指示作成）", "가공 라인 목록": "加工ライン一覧", "가동시간(분)": "稼働時間（分）", "감속기 ASSY (2단)": "減速機ASSY（2段）", "감속기 하우징": "減速機ハウジング", "감속비": "減速比", "개정 검토 요청": "改訂レビュー依頼", "개정 검토 요청 내용": "改訂レビュー依頼内容", "개정 검토 요청을 보냈습니다.": "改訂レビュー依頼を送信しました。", "개정번호": "改訂番号", "검사 결과를 하나 이상 입력해주세요.": "検査結果を1つ以上入力してください。", "검사 주기 변경": "検査周期変更", "검색": "検索", "검색 결과가 없습니다.": "検索結果がありません。", "검색어": "検索語", "결품으로 조립하지 못한 부품": "欠品で組み立てられなかった部品", "경과분": "経過分", "경과시간": "経過時間", "계량": "計量", "계획수량": "計画数量", "계획수량(EA)": "計画数量（EA）", "고장 내용": "故障内容", "고장 부위 사진": "故障箇所の写真", "고장명칭": "故障名称", "고장시작": "故障開始", "고장요인": "故障要因", "고장종료": "故障終了", "고장코드": "故障コード", "고주파 열처리기 #1": "高周波熱処理機 #1", "공구 마모로 교체": "工具摩耗による交換", "공구 파손": "工具破損", "공장": "工場", "공정": "工程", "공정 출고 (합계 : {n})": "工程出庫（合計：{n}）", "공정담당자": "工程担当者", "공정명": "工程名", "공정번호": "工程番号", "공정변경": "工程変更", "공정선택": "工程選択", "공정을 선택해주세요.": "工程を選択してください。", "공정종료": "工程終了", "공정코드": "工程コード", "공통": "共通", "관리 기준": "管理基準", "관리계획서": "管理計画書", "근무 구분": "勤務区分", "근무 구분이 {s}(으)로 바뀌었습니다.": "勤務区分を{s}に変更しました。", "금일 불량수량": "本日の不良数", "금일 양품수량": "本日の良品数", "금일 출고 LOT": "本日の出庫LOT", "기간별 작업지시를 조회하고 설비고장 · 불량 · 비가동 · 생산실적을 확인합니다.": "期間別の作業指示を照会し、設備故障・不良・非稼働・生産実績を確認します。", "기공": "気孔", "기대번호": "機台番号", "기대번호 {k}가 지정되었습니다.": "機台番号 {k} を指定しました。", "기대번호 · BOM · 공정종료": "機台番号・BOM・工程終了", "기대번호 선택": "機台番号選択", "기대번호별 사양": "機台番号別仕様", "기어 조립": "ギア組立", "기어오일": "ギアオイル", "기준값": "基準値", "기타": "その他", "내경 Ø45 H7": "内径 Ø45 H7", "내려온 작업지시가 없습니다.": "届いた作業指示がありません。", "내역이 없습니다.": "履歴がありません。", "냉각수 부족": "冷却水不足", "너트런너 #1": "ナットランナー #1", "노즐 Ø16": "ノズル Ø16", "누유 검사": "漏れ検査", "누유 시험기 #1": "漏れ試験機 #1", "누적생산수량(EA)": "累積生産数量（EA）", "다음": "次へ", "단조 소재": "鍛造素材", "닫기": "閉じる", "달성율(%)": "達成率（%）", "대": "大", "대기": "待機", "대표설비명": "代表設備名", "대표설비코드": "代表設備コード", "도면": "図面", "도면 이미지 영역": "図面イメージ領域", "도면번호": "図面番号", "도번": "図番", "도장 (회색)": "塗装（グレー）", "들뜸 없을 것": "浮きがないこと", "라인": "ライン", "라인(공정)을 고르면 해당 작업지시 목록이 조회됩니다.": "ライン（工程）を選ぶと、その作業指示一覧を照会します。", "라인명": "ライン名", "라인변경": "ライン変更", "라인선택": "ライン選択", "라인을 선택하면 재고가 표시됩니다.": "ラインを選択すると在庫を表示します。", "라인을 선택해주세요.": "ラインを選択してください。", "라인코드": "ラインコード", "로그아웃": "ログアウト", "로그아웃되었습니다. (목업에서는 화면이 유지됩니다)": "ログアウトしました。（モックアップでは画面を維持します）", "로더 #1": "ローダー #1", "로봇 용접기 #1": "ロボット溶接機 #1", "머시닝센터 #2": "マシニングセンタ #2", "먼저 [공정선택]으로 이 단말이 담당할 조립 공정을 고르세요.": "まず[工程選択]で、この端末が担当する組立工程を選んでください。", "먼저 [라인선택]으로 이 단말이 담당할 가공 라인을 고르세요.": "まず[ライン選択]で、この端末が担当する加工ラインを選んでください。", "명판 부착": "銘板貼付", "모두 읽음으로 표시했습니다.": "すべて既読にしました。", "모든 점검 항목을 입력해주세요.": "すべての点検項目を入力してください。", "모바일 등록": "モバイル登録", "모바일 화면 열기": "モバイル画面を開く", "목업에서는 왼쪽 휴대폰 화면에서 바로 동작을 확인할 수 있습니다.": "モックアップでは左のスマートフォン画面ですぐに動作を確認できます。", "목표대비 달성율": "目標対比達成率", "무가동1": "無稼働1", "무가동1시간": "無稼働1時間", "무가동2": "無稼働2", "무가동2시간": "無稼働2時間", "무가동3": "無稼働3", "무가동3시간": "無稼働3時間", "무가동4": "無稼働4", "무가동4시간": "無稼働4時間", "문서": "文書", "문서 개정 목록": "文書改訂一覧", "미가공": "未加工", "미부착": "未取付", "미부착 처리": "未取付処理", "미부착처리": "未取付処理", "미션 ASSY (4단)": "ミッションASSY（4段）", "미션 케이스": "ミッションケース", "미션오일": "ミッションオイル", "미작성": "未作成", "미적용": "未適用", "밀링": "ミーリング", "바코드": "バーコード", "바코드 입력": "バーコード入力", "바코드 출력": "バーコード出力", "바코드 출력 상세": "バーコード出力詳細", "바코드 출력 장수": "バーコード出力枚数", "바코드R": "バーコードR", "바코드를 스캔하거나 직접 입력한 뒤 [완료]를 누르세요.": "バーコードをスキャンまたは直接入力して[完了]を押してください。", "바코드를 입력해주세요.": "バーコードを入力してください。", "바코드발행": "バーコード発行", "발행한 바코드가 없습니다.": "発行したバーコードがありません。", "버(Burr)": "バリ", "버(Burr) 유무": "バリの有無", "베어링 6205": "ベアリング 6205", "변경": "変更", "변경 없음": "変更なし", "변속단수": "変速段数", "보내기": "送信", "볼트 체결 (너트런너)": "ボルト締結（ナットランナー）", "부적합": "不適合", "부착 위치 준수": "取付位置の遵守", "부품 (BOM)": "部品（BOM）", "부품 {n}건을 요청했습니다.": "部品{n}件を要請しました。", "부품 투입": "部品投入", "부품 투입(BOM)": "部品投入（BOM）", "부품명": "部品名", "부품불량수량": "部品不良数", "부품요청": "部品要請", "부품을 선택해주세요.": "部品を選択してください。", "부품코드": "部品コード", "불량내역": "不良履歴", "불량률": "不良率", "불량수량": "不良数量", "불량수량(EA)": "不良数量（EA）", "불량수량을 확인해주세요.": "不良数量を確認してください。", "불량유형": "不良タイプ", "불러오기": "呼び出し", "브리더": "ブリーザー", "브리더 밸브": "ブリーザーバルブ", "비가동": "非稼働", "비가동관리": "非稼働管理", "비가동내역": "非稼働履歴", "비가동명칭": "非稼働名称", "비가동시간(분)": "非稼働時間（分）", "비가동시작": "非稼働開始", "비가동종료": "非稼働終了", "비가동코드": "非稼働コード", "비고": "備考", "사용 순서": "使用手順", "사진 등록을 취소했습니다.": "写真登録を取り消しました。", "사진 등록하기": "写真を登録", "사진을 보냈습니다.": "写真を送信しました。", "사진을 촬영했습니다.": "写真を撮影しました。", "사진이 접수 건에 첨부되었습니다.": "写真を受付案件に添付しました。", "사진촬영": "写真撮影", "삭제": "削除", "상세": "詳細", "상세보기": "詳細表示", "상세스펙": "詳細スペック", "상한값": "上限値", "생산": "生産", "생산/불량관리": "生産・不良管理", "생산1팀": "生産1チーム", "생산1팀 · {s} 근무": "生産1チーム・{s}勤務", "생산1팀 · 가공반": "生産1チーム・加工班", "생산수량": "生産数量", "생산수량 {n}EA가 저장되었습니다.": "生産数量 {n}EA を保存しました。", "생산수량(EA)": "生産数量（EA）", "생산수량({a})이 지시수량({b})보다 적습니다. 그래도 작업을 종료할까요?": "生産数量（{a}）が指示数量（{b}）より少ないです。それでも作業を終了しますか？", "생산수량을 입력해주세요.": "生産数量を入力してください。", "생산수량을 직접 입력해 저장합니다.": "生産数量を直接入力して保存します。", "생산실적": "生産実績", "생산실적/비가동": "生産実績・非稼働", "생산율(%)": "生産率（%）", "생산일자": "生産日", "선공정 → 후공정": "前工程 → 後工程", "선삭": "旋削", "선택": "選択", "선택한 부품은 미부착으로 등록되어 후속 조치 대상으로 남습니다.": "選択した部品は未取付として登録され、後続処置の対象として残ります。", "설비": "設備", "설비 · 품질 · 생산 알림": "設備・品質・生産のお知らせ", "설비 모드": "設備モード", "설비 상태": "設備状態", "설비 수리 후 재가동": "設備修理後に再稼働", "설비 카운터로 생산수량이 자동 집계됩니다.": "設備カウンターで生産数量を自動集計します。", "설비고장": "設備故障", "설비고장 · 불량 · 비가동 · 실적": "設備故障・不良・非稼働・実績", "설비고장 사진 등록": "設備故障の写真登録", "설비고장 상태입니다. 조치가 끝나면 [작업현황]에서 재시작하세요.": "設備故障の状態です。処置が終わったら[作業状況]から再開してください。", "설비고장 요인 상세": "設備故障要因の詳細", "설비고장 접수": "設備故障受付", "설비고장 접수 때 표시된 QR코드를 휴대폰으로 스캔하면 열리는 화면입니다.": "設備故障受付時に表示されたQRコードをスマートフォンでスキャンすると開く画面です。", "설비고장관리": "設備故障管理", "설비고장내역": "設備故障履歴", "설비고장이 접수되었습니다.": "設備故障を受付しました。", "설비고장접수": "設備故障受付", "설비고장접수번호": "設備故障受付番号", "설비명": "設備名", "설비보전": "設備保全", "설비보전 · 품질 · 생산 알림을 모아 봅니다.": "設備保全・品質・生産のお知らせをまとめて表示します。", "설비점검": "設備点検", "설비코드": "設備コード", "설비코드 / 설비명": "設備コード／設備名", "센서 이상": "センサー異常", "소요량": "所要量", "소재": "素材", "소재 LOT가 투입되었습니다.": "素材LOTを投入しました。", "소재 입고 (자재창고)": "素材入庫（資材倉庫）", "소재 투입": "素材投入", "소재대기": "素材待ち", "소재대기중": "素材待ち中", "수동 모드": "手動モード", "수량": "数量", "수량을 입력해주세요.": "数量を入力してください。", "스냅링 Ø30": "スナップリング Ø30", "시작시간": "開始時刻", "시작일": "開始日", "시작일자": "開始日", "실적정보": "実績情報", "씰 압입 상태": "シール圧入状態", "안 읽음": "未読", "알림": "お知らせ", "알림이 없습니다.": "お知らせはありません。", "압입 프레스 #1": "圧入プレス #1", "야간": "夜間", "양품수량": "良品数量", "양품수량(EA)": "良品数量（EA）", "양품수량을 입력해주세요.": "良品数量を入力してください。", "언어": "言語", "없을 것": "ないこと", "연삭": "研削", "연삭기 #1": "研削盤 #1", "연속 침탄로 #1": "連続浸炭炉 #1", "열처리": "熱処理", "열처리 (침탄 · 템퍼링)": "熱処理（浸炭・焼戻し）", "열처리 1라인 (연속 침탄로)": "熱処理1ライン（連続浸炭炉）", "열처리 2라인 (고주파)": "熱処理2ライン（高周波）", "열처리를 마친 품목을 라인 · 품번 단위로 출고 등록하고 LOT 바코드를 발행합니다.": "熱処理を終えた品目をライン・品番単位で出庫登録し、LOTバーコードを発行します。", "열처리반": "熱処理班", "예: 오후 2시 전까지 라인으로 보내 주세요.": "例：午後2時までにラインへ送ってください。", "오일 종류": "オイル種類", "오일 주입량": "オイル注入量", "오일씰 Ø45": "オイルシール Ø45", "옵션항목명": "オプション項目名", "옵션항목순서": "オプション項目順序", "완료": "完了", "완료된 작업입니다.": "完了した作業です。", "외경 Ø62": "外径 Ø62", "외관 찍힘": "外観打痕", "요청": "要請", "요청 내용을 입력해주세요.": "要請内容を入力してください。", "요청 메모": "要請メモ", "요청수량": "要請数量", "요청수량을 하나 이상 입력해주세요.": "要請数量を1つ以上入力してください。", "용접 와이어 Ø1.2": "溶接ワイヤー Ø1.2", "용접 팁 M6": "溶接チップ M6", "위 목록에서 작업지시를 선택하세요.": "上の一覧から作業指示を選択してください。", "유압 압력 저하": "油圧低下", "육각볼트 M8×25": "六角ボルト M8×25", "육안": "目視", "이 작업지시의 기대번호가 아닙니다.": "この作業指示の機台番号ではありません。", "이동대차 단위 LOT 식별표 발행": "移動台車単位のLOT識別票発行", "이동대차수": "移動台車数", "이동대차수와 수량을 입력해주세요.": "移動台車数と数量を入力してください。", "이미 완료된 기대번호입니다.": "すでに完了した機台番号です。", "이미 투입된 LOT입니다.": "すでに投入済みのLOTです。", "이전": "前へ", "이전 작업의 소재 LOT 잔량": "前作業の素材LOT残量", "이전에 멈춘 작업지시가 {n}건 있습니다. [작업현황]에서 불러와 재시작할 수 있습니다.": "以前に停止した作業指示が{n}件あります。[作業状況]から呼び出して再開できます。", "일반": "一般", "일자": "日付", "읽음": "既読", "입력 가능한 기대번호": "入力可能な機台番号", "입력축 샤프트": "入力軸シャフト", "자동 모드": "自動モード", "자동 모드에서는 설비 카운터 값이 생산수량에 쌓입니다. [저장]을 누르면 누적생산수량에 반영됩니다.": "自動モードでは設備カウンター値が生産数量に加算されます。[保存]を押すと累積生産数量に反映されます。", "자동차부품 제조업 POP": "自動車部品製造業 POP", "자재 LOT 변경": "資材LOT変更", "자재대기": "資材待ち", "자주검사 · 4M 변경 기록": "自主検査・4M変更記録", "작성 완료": "作成完了", "작업 공정": "作業工程", "작업 대기": "作業待機", "작업 대상": "作業対象", "작업 상태": "作業状態", "작업 순서 · 사진 영역": "作業手順・写真領域", "작업 시작 · 생산 입력 · 바코드": "作業開始・生産入力・バーコード", "작업 완료": "作業完了", "작업 중": "作業中", "작업 중으로 돌아왔습니다.": "作業中に戻りました。", "작업 중이 아닙니다.": "作業中ではありません。", "작업 집계": "作業集計", "작업(근무) 구분": "作業（勤務）区分", "작업공정": "作業工程", "작업대기": "作業待機", "작업대기 시작시간": "作業待機開始時刻", "작업대기로 바뀌었습니다.": "作業待機に変わりました。", "작업대기중": "作業待機中", "작업반명": "作業班名", "작업방법 변경": "作業方法変更", "작업시간": "作業時間", "작업시작": "作業開始", "작업시작시간": "作業開始時刻", "작업시작일자": "作業開始日", "작업실적 수량": "作業実績数量", "작업실적수량": "作業実績数量", "작업완료처리": "作業完了処理", "작업을 불러왔습니다.": "作業を呼び出しました。", "작업을 선택해주세요.": "作業を選択してください。", "작업을 시작하면 집계가 표시됩니다.": "作業を開始すると集計が表示されます。", "작업이 시작되었습니다.": "作業を開始しました。", "작업이 완료 처리되었습니다.": "作業を完了処理しました。", "작업이 재시작되었습니다.": "作業を再開しました。", "작업일자": "作業日", "작업일자를 입력해주세요.": "作業日を入力してください。", "작업자": "作業者", "작업자 / 부서명": "作業者／部署名", "작업자 변경": "作業者変更", "작업자A": "作業者A", "작업자B": "作業者B", "작업자C": "作業者C", "작업자D": "作業者D", "작업자E": "作業者E", "작업자F": "作業者F", "작업자G": "作業者G", "작업자H": "作業者H", "작업재시작": "作業再開", "작업정보": "作業情報", "작업종료": "作業終了", "작업종료시간": "作業終了時刻", "작업준비": "作業準備", "작업준비중": "作業準備中", "작업중인수량": "作業中数量", "작업지시": "作業指示", "작업지시 {no}가 생성되었습니다.": "作業指示 {no} を作成しました。", "작업지시 {no}의 모든 기대번호가 완료되었습니다.": "作業指示 {no} のすべての機台番号が完了しました。", "작업지시 번호": "作業指示番号", "작업지시 생성": "作業指示作成", "작업지시 생성이 허용된 라인입니다.": "作業指示の作成が許可されたラインです。", "작업지시 정보": "作業指示情報", "작업지시 진행율": "作業指示進捗率", "작업지시를 시작하면 기대번호가 표시됩니다.": "作業指示を開始すると機台番号が表示されます。", "작업지시목록": "作業指示一覧", "작업지시번호": "作業指示番号", "작업지시번호 · 품목 · LOT 검색": "作業指示番号・品目・LOTを検索", "작업지시자": "作業指示者", "작업표준서": "作業標準書", "작업표준서 바로가기": "作業標準書へ", "작업현황": "作業状況", "작업현황 - {p}": "作業状況 - {p}", "작업현황을 선택해주세요.": "作業状況を選択してください。", "작지번호": "作業指示番号", "작지생성": "作業指示作成", "잔량이 처리되었습니다.": "残量を処理しました。", "잔량처리": "残量処理", "장비번호": "装置番号", "재고 조회": "在庫照会", "재고량": "在庫量", "재고위치": "在庫位置", "재발행": "再発行", "재발행할 항목을 선택해주세요.": "再発行する項目を選択してください。", "재생": "再生", "재생구분": "再生区分", "재시작 / 작업대기": "再開／作業待機", "재시작 시간": "再開時刻", "재전송": "再送信", "저장": "保存", "저장 후 ERP로 전송했습니다.": "保存後、ERPへ送信しました。", "저장/전송": "保存・送信", "저장/출력": "保存・出力", "적용": "適用", "적용여부": "適用有無", "적합": "適合", "전 작업(라인)": "前作業（ライン）", "전송 완료": "送信完了", "전장": "全長", "전체": "全体", "전체 : {n} 건": "全体：{n} 件", "전체 읽음": "すべて既読", "전체화면": "全画面", "전체화면을 열 수 없습니다.": "全画面を開けません。", "점검 항목": "点検項目", "접수": "受付", "접수 건 선택": "受付案件の選択", "접수번호": "受付番号", "접수번호 · 설비 · 고장코드를 확인합니다.": "受付番号・設備・故障コードを確認します。", "접수시각": "受付時刻", "접수자": "受付者", "접수하면 작업 상태가 설비고장으로 바뀌고 접수번호와 QR코드가 표시됩니다. 휴대폰으로 QR코드를 스캔해 고장 부위 사진을 첨부할 수 있습니다.": "受付すると作業状態が設備故障に変わり、受付番号とQRコードが表示されます。スマートフォンでQRコードをスキャンして故障箇所の写真を添付できます。", "제1공장": "第1工場", "제2공장": "第2工場", "제품명": "製品名", "제품번호": "製品番号", "제품번호 / 제품명": "製品番号／製品名", "제품번호/제품명": "製品番号／製品名", "제품코드": "製品コード", "제품코드 / 제품명": "製品コード／製品名", "조건에 맞는 공정이 없습니다.": "条件に合う工程がありません。", "조건에 맞는 라인이 없습니다.": "条件に合うラインがありません。", "조건에 맞는 작업지시가 없습니다.": "条件に合う作業指示がありません。", "조립": "組立", "조립 1라인": "組立1ライン", "조립 2라인": "組立2ライン", "조립 공정 선택": "組立工程選択", "조립 문서": "組立文書", "조립 옵션": "組立オプション", "조립 자주검사": "組立自主検査", "조립 작업이 시작되었습니다.": "組立作業を開始しました。", "조립1팀": "組立1チーム", "조립옵션": "組立オプション", "조치 완료": "処置完了", "조치 완료로 처리했습니다.": "処置完了として処理しました。", "조치 중": "処置中", "조회": "照会", "조회 건수 {n}건": "照会件数 {n}件", "조회구분": "照会区分", "조회된 데이터가 없습니다.": "照会されたデータがありません。", "종료시간": "終了時刻", "종료일": "終了日", "종품": "終品", "주간": "昼間", "주축 이상": "主軸異常", "주축 회전 시 이상 소음 발생": "主軸回転時に異音が発生", "준비": "準備", "중": "中", "중점 관리 항목": "重点管理項目", "지시수량": "指示数量", "지시수량을 모두 생산했습니다.": "指示数量をすべて生産しました。", "진행 중": "進行中", "진행 중인 작업이 없습니다.": "進行中の作業がありません。", "진행 중인 작업이 있습니다. 작업대기나 작업종료 후 로그아웃하세요.": "進行中の作業があります。作業待機または作業終了の後にログアウトしてください。", "진행상태": "進行状態", "창을 닫습니다. (목업에서는 화면이 유지됩니다)": "ウィンドウを閉じます。（モックアップでは画面を維持します）", "처리": "処理", "처리현황": "処理状況", "첨부된 사진이 없습니다.": "添付された写真がありません。", "첨부파일": "添付ファイル", "첨부한 사진은 작업정보 > 설비고장관리의 [상세]에서 확인합니다.": "添付した写真は作業情報 > 設備故障管理の[詳細]で確認します。", "체크시트": "チェックシート", "체크시트가 아직 작성되지 않았습니다.": "チェックシートがまだ作成されていません。", "체크시트가 저장되었습니다.": "チェックシートを保存しました。", "체크시트가 저장되었습니다. 부적합 항목이 있습니다.": "チェックシートを保存しました。不適合項目があります。", "체크시트가 저장되었습니다. 한계값을 벗어난 항목이 있습니다.": "チェックシートを保存しました。限界値を外れた項目があります。", "초기화": "初期化", "초품": "初品", "총근무시간(분)": "総勤務時間（分）", "총생산수량": "総生産数量", "최종 검사": "最終検査", "최초 제정": "初版制定", "출고 내역이 없습니다.": "出庫履歴がありません。", "출고일자": "出庫日", "출고처리": "出庫処理", "출고처리 내역": "出庫処理履歴", "출고처리 내역이 없습니다.": "出庫処理履歴がありません。", "출력 기어": "出力ギア", "출력축 (키 홈)": "出力軸（キー溝）", "출력축 형상": "出力軸形状", "출하 검사": "出荷検査", "취소": "キャンセル", "측정": "測定", "측정값": "測定値", "측정값이 한계값을 벗어나면 빨간색으로 표시됩니다.": "測定値が限界値を外れると赤色で表示されます。", "측정구분": "測定区分", "치수 공차 변경": "寸法公差変更", "치수 불량": "寸法不良", "케이스 도장": "ケース塗装", "테마 전환": "テーマ切替", "템퍼링로 #1": "焼戻し炉 #1", "토치 위치 센서 신호 불안정": "トーチ位置センサー信号が不安定", "토크 체결값 (M8)": "締付トルク（M8）", "토크렌치": "トルクレンチ", "투입된 소재 LOT가 없습니다.": "投入された素材LOTがありません。", "투입량": "投入量", "투입한 소재 LOT({l})의 잔량을 함께 처리합니다.": "投入した素材LOT（{l}）の残量も合わせて処理します。", "특이사항": "特記事項", "평와셔 M10": "平ワッシャー M10", "평행 키 8×7": "平行キー 8×7", "표면 거칠기": "表面粗さ", "표준작업시간": "標準作業時間", "품명": "品名", "품목": "品目", "품목 검색": "品目検索", "품목검색": "品目検索", "품목명": "品目名", "품목을 먼저 선택해주세요.": "先に品目を選択してください。", "품목을 선택해주세요.": "品目を選択してください。", "품목코드": "品目コード", "품번": "品番", "품질": "品質", "품질 확인 대기": "品質確認待ち", "플랜지 커버": "フランジカバー", "플러그 PT1/4": "プラグ PT1/4", "필수 입력": "必須入力", "하나의 항목을 선택해주세요.": "1つの項目を選択してください。", "하우징 (가공품)": "ハウジング（加工品）", "하우징 압입": "ハウジング圧入", "하한값": "下限値", "한계값": "限界値", "합계 수량 {n} EA": "合計数量 {n} EA", "항목": "項目", "현장 실적관리 시스템": "現場実績管理システム", "현장에서 확인한 개정 필요 사항을 입력하세요.": "現場で確認した改訂が必要な事項を入力してください。", "현재": "現在", "현재 공정(라인)": "現在工程（ライン）", "호빙": "ホブ加工", "호빙기 #1": "ホブ盤 #1", "확인": "確認", "확인내용 (적합/부적합)": "確認内容（適合／不適合）", "확인을 누르면 이 기대번호의 공정이 완료되고 다음 기대번호로 넘어갑니다.": "確認を押すと、この機台番号の工程が完了し、次の機台番号へ進みます。", "후 공정(라인)": "後工程（ライン）", "휴대폰으로 QR을 스캔하면 사진 등록 화면이 열립니다.": "スマートフォンでQRをスキャンすると写真登録画面が開きます。", "휴대폰으로 QR코드를 스캔해 이 화면을 엽니다.": "スマートフォンでQRコードをスキャンしてこの画面を開きます。"}};
+</script>
+<script>render();</script>
+</body>
+</html>
